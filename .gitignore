@@ -1,0 +1,5 @@
+build/*
+.wplib/*
+.vscode/*
+.SysId/*
+bin/*
