@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.auto.groups.AutoTest2;
-import frc.robot.commands.auto.groups.AutoTest3;
+import frc.robot.commands.auto.groups.TrajectoryOnly;
+import frc.robot.commands.auto.groups.TwoBallAuto;
+import frc.robot.commands.auto.groups.SingleBallAuto;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
 import frc.robot.subsystems.*;
@@ -133,8 +134,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand(Trajectory in_trajectory) {
     m_trajectory = in_trajectory;
-    return new AutoTest3(bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
-    // return new AutoTest2(driveTrain,m_trajectory);
+    // return new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
+    return new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
+    // return new TrajectoryOnly(driveTrain, m_trajectory);
   }
 
   public void disabledLEDS() {

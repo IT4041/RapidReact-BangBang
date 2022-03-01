@@ -22,7 +22,7 @@ public class IntakeElbow extends SubsystemBase {
   private CANSparkMax sparkMax;
   private SparkMaxPIDController pidController;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-  private double home, down;
+  private double home, down, MiddlePosition;
   private float kForwardSoftLimit, kReverseSoftLimit;
   private RelativeEncoder encoder;
   private boolean done = false;
@@ -61,6 +61,7 @@ public class IntakeElbow extends SubsystemBase {
     kMinOutput = -1;
     kForwardSoftLimit = -105;
     kReverseSoftLimit = 0;
+    MiddlePosition = -52.5;
     home = 0;
     down = kForwardSoftLimit;
 
@@ -107,6 +108,11 @@ public class IntakeElbow extends SubsystemBase {
   public void down(){
     System.out.println("down");
     pidController.setReference(down, ControlType.kPosition);
+  }
+
+  public void middle(){
+    System.out.println("MiddlePosition");
+    pidController.setReference(MiddlePosition, ControlType.kPosition);
   }
 
 }

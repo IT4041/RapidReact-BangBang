@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -88,6 +89,7 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putBoolean("onTarget", this.onTarget());
     SmartDashboard.putBoolean("Aquire Target", this.aquireTarget);
     SmartDashboard.putNumber("turret error", this.error);
+    SmartDashboard.putNumber("Current", current);
 
     if(aquireTarget){//Bombardier notified turrent to target
       // TrackTarget returns the offset to the target in degrees
@@ -117,17 +119,24 @@ public class Turret extends SubsystemBase {
     SmartDashboard.putNumber("m_xOffset", m_xOffset);
   }
 
-  public void targetingDisabled(){
+  public void targetingDisabled(boolean Reset){
     //Turret will stop auto-aiming towards target
     // and return to center back position
     this.aquireTarget = false;
     
-    //reset x offset
-    m_xOffset = 0.0;
 
-    //recenter turret on back of robot
-    current = 0;
-    pidController.setReference(current, ControlType.kPosition);
+    if(Reset){
+      //reset x offset
+      m_xOffset = 0.0;
+
+      //recenter turret on back of robot
+      current = 0.0;
+      pidController.setReference(current, ControlType.kPosition);
+    }
+  }
+
+  public void targetingDisabledNoParam(){
+    this.targetingDisabled(false);
   }
   // end OI functions *******************************************************************
 
@@ -148,6 +157,65 @@ public class Turret extends SubsystemBase {
     return Math.abs(error) < tolerance;
   }
 
-  // end vision functions *******************************************************************
+  //***********positive***********************************
+  public void turn1degreesPositive(){
+    this.turnToDegree(1.0);
+  }
 
+  public void turn2degreesPositive(){
+    this.turnToDegree(2.0);
+  }
+
+  public void turn5degreesPositive(){
+    this.turnToDegree(5.0);
+  }
+
+  public void turn10degreesPositive(){
+    this.turnToDegree(10.0);
+  }
+  public void turn30degreesPositive(){
+    this.turnToDegree(30.0);
+  }
+
+  public void turn45degreesPositive(){
+    this.turnToDegree(45.0);
+  }
+  //**************negative********************************
+  public void turn1degreesNegative(){
+    this.turnToDegree(-1.0);
+  }
+
+  public void turn2degreesNegative(){
+    this.turnToDegree(-2.0);
+  }
+
+  public void turn5degreesNegative(){
+    this.turnToDegree(-5.0);
+  }
+
+  public void turn10degreesNegative(){
+    this.turnToDegree(-10.0);
+  }
+
+  public void turn30degreesNegative(){
+    this.turnToDegree(-30.0);
+  }
+
+  public void turn45degreesNegative(){
+    this.turnToDegree(-45.0);
+  }
+  //*******************************************************
+
+  private void turnToDegree(double degrees){
+    System.out.println("turnToDegree:" + degrees);
+    this.current = this.current + (degrees * this.clicksPerDegree);
+    System.out.println("Current:" + this.current);
+    System.out.println("degress to clicks:" + (degrees * this.clicksPerDegree));
+
+    SmartDashboard.putNumber("Current", this.current);
+    pidController.setReference(this.current, ControlType.kPosition);
+
+  }
+
+  // end vision functions *******************************************************************
 }

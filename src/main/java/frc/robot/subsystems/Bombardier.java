@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.components.*;
 
@@ -71,7 +72,7 @@ public class Bombardier extends SubsystemBase {
     m_Indexer.setAutoIndexOff();
     if (m_failSafe) {
       //lock turret straight forward
-      m_Turret.targetingDisabled();
+      m_Turret.targetingDisabled(true);
       // set shooter head to 1/2 throttle
       m_Shooter.failSafeShoot();
       //turn on indexer
@@ -106,7 +107,9 @@ public class Bombardier extends SubsystemBase {
 
   private void stopTargeting() {
     m_LimeLight.ledOff();
-    m_Turret.targetingDisabled();
+
+    boolean reset = DriverStation.isAutonomous()?false:true;
+    m_Turret.targetingDisabled(reset);
     m_Shooter.off();
   }
 

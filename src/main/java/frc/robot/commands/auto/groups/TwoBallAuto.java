@@ -18,13 +18,14 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.IntakeElbow;
 import frc.robot.subsystems.IntakeWheels;
+import frc.robot.subsystems.Turret;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutoTest3 extends SequentialCommandGroup {
+public class TwoBallAuto extends SequentialCommandGroup {
 
   private BangBangShooter m_shooter;
   private IntakeElbow m_intakeElbow;
@@ -32,9 +33,10 @@ public class AutoTest3 extends SequentialCommandGroup {
   private IntakeWheels m_intakeWheels;
   private DriveTrain m_drivetrain;
   private Trajectory m_trajectory;
+  private Turret m_turret;
 
   /** Creates a new AutoTest3. */
-  public AutoTest3(BangBangShooter in_shooter, IntakeElbow in_intakeElbow, Indexer in_Indexer, IntakeWheels in_intakeWheels, DriveTrain in_drivetrain, Trajectory in_trajectory) {
+  public TwoBallAuto(Turret in_turret, BangBangShooter in_shooter, IntakeElbow in_intakeElbow, Indexer in_Indexer, IntakeWheels in_intakeWheels, DriveTrain in_drivetrain, Trajectory in_trajectory) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_shooter = in_shooter;
@@ -43,6 +45,7 @@ public class AutoTest3 extends SequentialCommandGroup {
     m_intakeWheels = in_intakeWheels;
     m_drivetrain = in_drivetrain;
     m_trajectory = in_trajectory;
+    m_turret = in_turret;
 
     var leftController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
     var rightController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
@@ -82,35 +85,34 @@ public class AutoTest3 extends SequentialCommandGroup {
     
 
     addCommands(
+      new InstantCommand(m_intakeElbow::down,m_intakeElbow),
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
       new InstantCommand(m_shooter::setShotRpmClose,m_shooter),
       new InstantCommand(m_shooter::enable,m_shooter),
       new WaitCommand(1),
       new InstantCommand(m_Indexer::shoot, m_Indexer),
-      new WaitCommand(2),
+      new WaitCommand(1.5),
       new InstantCommand(m_Indexer::off, m_Indexer),
+      new InstantCommand(m_turret::turn30degreesPositive,m_turret),
+      new InstantCommand(m_turret::turn5degreesPositive,m_turret),
       new InstantCommand(m_shooter::disable,m_shooter),
-
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
-      
-      new InstantCommand(m_intakeElbow::down,m_intakeElbow),
-      new WaitCommand(.3),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
 
       ramseteCommand.andThen(new InstantCommand(m_drivetrain::setBrake,m_drivetrain).andThen(new InstantCommand(m_drivetrain::tankDriveVoltageStop,m_drivetrain))),
 
-      new InstantCommand(m_shooter::setShotRpmFar,m_shooter),
       new InstantCommand(m_shooter::enable,m_shooter),
       new WaitCommand(1),
       new InstantCommand(m_intakeWheels::off,m_intakeWheels),
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
+      
       new InstantCommand(m_Indexer::shoot, m_Indexer),
       new WaitCommand(2),
-
       new InstantCommand(m_Indexer::off, m_Indexer),
       new InstantCommand(m_shooter::disable,m_shooter),
-      
-      new InstantCommand(m_intakeElbow::home,m_intakeElbow)
+      new InstantCommand(m_intakeElbow::home,m_intakeElbow),
+      new InstantCommand(m_turret::turn5degreesNegative,m_turret),
+      new InstantCommand(m_turret::turn30degreesNegative,m_turret)
     );
   }
 }

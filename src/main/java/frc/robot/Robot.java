@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   public RobotContainer m_robotContainer;
   // private Camera camera; 
 
-  String trajectoryJSON = "pathplanner/generatedJSON/New_Path2.wpilib.json";
+  String trajectoryJSON = "pathplanner/generatedJSON/SingleBall_Path2.wpilib.json";
   Trajectory trajectory_test;
 
   /**

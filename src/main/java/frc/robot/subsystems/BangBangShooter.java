@@ -28,8 +28,8 @@ public class BangBangShooter extends SubsystemBase {
   private double rpmTolerance = 50;
 
   private double kstatic = 0.0008;
-  private double kvelocity = 0.0597;
-  private double kacceleraton = 0.07;
+  private double kvelocity = 0.19;
+  private double kacceleraton = 0.13;
 
   private boolean enabled = false;
 
@@ -155,11 +155,11 @@ public class BangBangShooter extends SubsystemBase {
   }
 
   public void setShotRpmFar(){
-    this.setRPM(7);
+    this.setRPM(4);
   }
 
   public void setShotRpmClose(){
-    this.setRPM(5);
+    this.setRPM(3);
   }
 
   public void setRPM(double rpm){
