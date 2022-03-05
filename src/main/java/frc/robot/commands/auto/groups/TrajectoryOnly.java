@@ -5,7 +5,6 @@
 package frc.robot.commands.auto.groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;

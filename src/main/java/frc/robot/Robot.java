@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import frc.robot.subsystems.components.Camera;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -31,34 +31,26 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public RobotContainer m_robotContainer;
-  // private Camera camera; 
 
-  //String trajectoryJSON = "pathplanner/generatedJSON/SingleBall_Path1.wpilib.json";
-  String trajectoryJSON = "pathplanner/generatedJSON/TwoBall1_Path.wpilib.json";
-  Trajectory trajectory_test;
+  String basePath = "pathplanner/generatedJSON/";
+  String OneB1_dir = "SingleBall_Path1.wpilib.json";
+  String OneB2_dir = "SingleBall_Path2.wpilib.json";
+  String OneB3_dir = "SingleBall_Path3.wpilib.json";
+  String TwoB1_dir = "TwoBall1_Path.wpilib.json";
+  String TwoB2_dir = "TwoBall2_Path.wpilib.json";
+  String ThreeB1A_dir = "ThreeBall1A_Path.wpilib.json";
+  String ThreeB1B_dir = "ThreeBall1B_Path.wpilib.json";
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  Trajectory Traj_OneB1, Traj_OneB2, Traj_OneB3 , Traj_TwoB1, Traj_TwoB2 ,Traj_ThreeB1A ,Traj_ThreeB1B;
+
   @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
 
     System.out.println("Robot Init");
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(this.loadTrajectories());
     m_robotContainer.disabledLEDS();
-
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory_test = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-      System.out.println("Trajectory open : " + trajectoryJSON);
-
-    } catch (IOException ex) {
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-      System.err.println("Unable to open trajectory: " + trajectoryJSON +"\n"+ ex.getStackTrace());
-    }
 
     CameraServer.startAutomaticCapture();
 
@@ -99,8 +91,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    //m_autonomousCommand = m_robotContainer.getAutonomousCommand(trajectory_test1,trajectory_test2);
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(trajectory_test);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -147,4 +138,51 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {}
+
+  private Trajectory[] loadTrajectories(){
+
+    Trajectory[] trajectories = new Trajectory[7];
+    
+    try {
+      Path Path_OneB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB1_dir );
+      Traj_OneB1 = TrajectoryUtil.fromPathweaverJson(Path_OneB1);
+      System.out.println("One ball 1 open");
+      trajectories[0] = Traj_OneB1;
+
+      Path Path_OneB2 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB2_dir );
+      Traj_OneB2 = TrajectoryUtil.fromPathweaverJson(Path_OneB2);
+      System.out.println("One ball 2 open");
+      trajectories[1] = Traj_OneB2;
+
+      Path Path_OneB3 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB3_dir );
+      Traj_OneB3 = TrajectoryUtil.fromPathweaverJson(Path_OneB3);
+      System.out.println("Two ball 3 open");
+      trajectories[2] = Traj_OneB3;
+
+      Path Path_TwoB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoB1_dir );
+      Traj_TwoB1 = TrajectoryUtil.fromPathweaverJson(Path_TwoB1);
+      System.out.println("One ball 1 open");
+      trajectories[3] = Traj_TwoB1;
+
+      Path Path_TwoB2 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoB2_dir );
+      Traj_TwoB2 = TrajectoryUtil.fromPathweaverJson(Path_TwoB2);
+      System.out.println("Two ball 2 open");
+      trajectories[4] = Traj_TwoB2;
+
+      Path Path_ThreeB1A = Filesystem.getDeployDirectory().toPath().resolve(basePath + ThreeB1A_dir );
+      Traj_ThreeB1A = TrajectoryUtil.fromPathweaverJson(Path_ThreeB1A);
+      System.out.println("Three ball 1A open");
+      trajectories[5] = Traj_ThreeB1A;
+
+      Path Path_ThreeB1B = Filesystem.getDeployDirectory().toPath().resolve(basePath + ThreeB1B_dir );
+      Traj_ThreeB1B = TrajectoryUtil.fromPathweaverJson(Path_ThreeB1B);
+      System.out.println("Three ball 1B open");
+      trajectories[6] = Traj_ThreeB1B;
+
+    } catch (IOException ex) {
+      DriverStation.reportError("Unable to open trajectory", ex.getStackTrace());
+      System.err.println("Unable to open trajectory\n"+ ex.getStackTrace());
+    }
+    return trajectories;
+  }
 }
