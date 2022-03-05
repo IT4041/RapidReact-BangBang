@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import javax.management.BadStringOperationException;
-
 import edu.wpi.first.math.trajectory.Trajectory;
 //import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -19,14 +17,14 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.robot.commands.auto.groups.SingleBallAuto;
+import frc.robot.commands.auto.groups.ThreeBallAuto;
 import frc.robot.commands.auto.groups.TrajectoryOnly;
 import frc.robot.commands.auto.groups.TwoBallAuto;
-import frc.robot.commands.auto.groups.SingleBallAuto;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.components.*;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -60,19 +58,39 @@ public class RobotContainer {
   private final BangBangShooter bbshooter = new BangBangShooter();
   private final Bombardier bombardier = new Bombardier(indexer, turret, bbshooter, limeLight, intakeWheels);
 
-  private SendableChooser<SequentialCommandGroup> chooser = new SendableChooser<>();
-
-  private Trajectory m_trajectory;
+  private SendableChooser<Command> m_chooser;
+  private Trajectory[] m_trajectories;
+  private SingleBallAuto OneB1, OneB2, OneB3;
+  private TwoBallAuto TwoB1, TwoB2;
+  private ThreeBallAuto ThreeB1;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  public RobotContainer() {
+  public RobotContainer(Trajectory[] in_trajectories) {
+    m_trajectories = in_trajectories;
 
     // Configure the button bindings
     configureButtonBindings();
 
-    SmartDashboard.putData(chooser);
+    this.OneB1 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[0]);
+    this.OneB2 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[1]);
+    this.OneB3 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[2]);
+    this.TwoB1 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[3]);
+    this.TwoB2 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[4]);
+    this.ThreeB1 = new ThreeBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[5],m_trajectories[6]);
+
+    this.m_chooser = new SendableChooser<Command>();
+
+    this.m_chooser.setDefaultOption("One Ball 1", this.OneB1);
+    this.m_chooser.addOption("One Ball 2", this.OneB2);
+    this.m_chooser.addOption("One Ball 3", this.OneB3);
+    this.m_chooser.addOption("Two Ball 1", this.TwoB1);
+    this.m_chooser.addOption("Two Ball 2", this.TwoB2);
+    this.m_chooser.addOption("Three Ball", this.ThreeB1);
+
+    // Put the chooser on the dashboard
+    SmartDashboard.putData(this.m_chooser);
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
@@ -84,14 +102,6 @@ public class RobotContainer {
 
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-   * it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
 
     JoystickButton buttonA_dr = new JoystickButton(driver, Constants.OIConstants.buttonA);
@@ -130,16 +140,10 @@ public class RobotContainer {
 
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand(Trajectory in_trajectory) {
-    m_trajectory = in_trajectory;
-    return new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
-    //return new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
-    // return new TrajectoryOnly(driveTrain, m_trajectory);
+
+  public Command getAutonomousCommand() {
+    System.out.println("getAutonomousCommand");
+    return m_chooser.getSelected();
   }
 
   public void disabledLEDS() {
@@ -151,6 +155,6 @@ public class RobotContainer {
   }
 
   public void enableShooter() {
-    //bbshooter.enable();
+    bbshooter.enable();
   }
 }

@@ -60,7 +60,7 @@ public class Turret extends SubsystemBase {
 
     pidController.setFeedbackDevice(m_encoder);
 
-    pidController.setP(0.021 ,0);
+    pidController.setP(0.031 ,0);
     pidController.setI(0.0, 0);
     pidController.setD(0.05, 0);
     pidController.setIZone(0.0, 0);
