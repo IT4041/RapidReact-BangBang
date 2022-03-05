@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import javax.management.BadStringOperationException;
+
 import edu.wpi.first.math.trajectory.Trajectory;
 //import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -103,6 +105,7 @@ public class RobotContainer {
     buttonA_dr.whenPressed(new InstantCommand(elevator::up,elevator));
     buttonY_dr.whenPressed(new InstantCommand(elevator::down, elevator));
 
+    // in an emergency allow user to take over control
     buttonSelect_dr.whenPressed(new InstantCommand(bombardier::togglFailSafe,bombardier));
 
     JoystickButton buttonA_as = new JoystickButton(assist, Constants.OIConstants.buttonA);
@@ -134,8 +137,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand(Trajectory in_trajectory) {
     m_trajectory = in_trajectory;
-    // return new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
-    return new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
+    return new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
+    //return new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectory);
     // return new TrajectoryOnly(driveTrain, m_trajectory);
   }
 
@@ -145,5 +148,9 @@ public class RobotContainer {
 
   public void enableAutoIndexing() {
     indexer.setAutoIndexOn();
+  }
+
+  public void enableShooter() {
+    //bbshooter.enable();
   }
 }

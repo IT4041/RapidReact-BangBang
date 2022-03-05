@@ -86,6 +86,7 @@ public class SingleBallAuto extends SequentialCommandGroup {
 
     addCommands(
       new InstantCommand(m_intakeElbow::down,m_intakeElbow),
+      new InstantCommand(m_turret::turn10degreesNegative,m_turret),
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
       new InstantCommand(m_shooter::setShotRpmClose,m_shooter),
       new InstantCommand(m_shooter::enable,m_shooter),
@@ -93,8 +94,6 @@ public class SingleBallAuto extends SequentialCommandGroup {
       new InstantCommand(m_Indexer::shoot, m_Indexer),
       new WaitCommand(1.5),
       new InstantCommand(m_Indexer::off, m_Indexer),
-      // new InstantCommand(m_turret::turn30degreesPositive,m_turret),
-      // new InstantCommand(m_turret::turn5degreesPositive,m_turret),
       new InstantCommand(m_shooter::disable,m_shooter),
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
@@ -110,9 +109,12 @@ public class SingleBallAuto extends SequentialCommandGroup {
       new WaitCommand(2),
       new InstantCommand(m_Indexer::off, m_Indexer),
       new InstantCommand(m_shooter::disable,m_shooter),
-      new InstantCommand(m_intakeElbow::home,m_intakeElbow)//,
-      // new InstantCommand(m_turret::turn5degreesNegative,m_turret),
-      // new InstantCommand(m_turret::turn30degreesNegative,m_turret)
+      new InstantCommand(m_shooter::setIsTele,m_shooter),
+      new InstantCommand(m_turret::turn10degreesPositive,m_turret),
+      new WaitCommand(2),
+
+      // remove this prior to comp
+      new InstantCommand(m_intakeElbow::home,m_intakeElbow)
     );
   }
 }

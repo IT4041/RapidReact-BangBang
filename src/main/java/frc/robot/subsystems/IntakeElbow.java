@@ -100,6 +100,10 @@ public class IntakeElbow extends SubsystemBase {
     SmartDashboard.putNumber("elbow position", encoder.getPosition());
   }
 
+  public boolean done(){
+    return this.done;
+  }
+
   public void home(){
     System.out.println("home");
     pidController.setReference(home, ControlType.kPosition);

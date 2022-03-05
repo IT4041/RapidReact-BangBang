@@ -99,20 +99,23 @@ public class TwoBallAuto extends SequentialCommandGroup {
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
 
-      ramseteCommand.andThen(new InstantCommand(m_drivetrain::setBrake,m_drivetrain).andThen(new InstantCommand(m_drivetrain::tankDriveVoltageStop,m_drivetrain))),
+      //ramseteCommand.andThen(new InstantCommand(m_drivetrain::setBrake,m_drivetrain).andThen(new InstantCommand(m_drivetrain::tankDriveVoltageStop,m_drivetrain))),
 
       new InstantCommand(m_shooter::enable,m_shooter),
       new WaitCommand(1),
       new InstantCommand(m_intakeWheels::off,m_intakeWheels),
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
-      
       new InstantCommand(m_Indexer::shoot, m_Indexer),
       new WaitCommand(2),
       new InstantCommand(m_Indexer::off, m_Indexer),
       new InstantCommand(m_shooter::disable,m_shooter),
-      new InstantCommand(m_intakeElbow::home,m_intakeElbow),
+      new InstantCommand(m_shooter::setIsTele,m_shooter),
       new InstantCommand(m_turret::turn5degreesNegative,m_turret),
-      new InstantCommand(m_turret::turn30degreesNegative,m_turret)
+      new InstantCommand(m_turret::turn30degreesNegative,m_turret),
+      new WaitCommand(2),
+      
+      // remove this prior to comp
+      new InstantCommand(m_intakeElbow::home,m_intakeElbow)
     );
   }
 }

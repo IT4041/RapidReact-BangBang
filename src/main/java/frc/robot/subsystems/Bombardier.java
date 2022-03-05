@@ -40,15 +40,6 @@ public class Bombardier extends SubsystemBase {
     // m_bbShooter = null;
   }
 
-//   public Bombardier(Indexer in_Indexer, Turret in_Turret, BangBangShooter in_bbShooter, LimeLight in_LimeLight,
-//   IntakeWheels in_IntakeWheels) {
-//   m_Indexer = in_Indexer;
-//   m_Turret = in_Turret;
-//   m_bbShooter = in_bbShooter;
-//   m_LimeLight = in_LimeLight;
-//   // m_IntakeWheels = in_IntakeWheels;
-//   m_Shooter = null;
-// }
 
   @Override
   public void periodic() {
@@ -97,7 +88,8 @@ public class Bombardier extends SubsystemBase {
     m_LimeLight.ledOn();
     m_Turret.targetingEnabled(m_LimeLight.getXOffset());
     if(m_Turret.onTarget() && m_LimeLight.hasValidTarget()){
-      m_Shooter.on(m_LimeLight.getDistanceToTarget());
+      m_Shooter.enable();
+      m_Shooter.on(m_LimeLight.getDistance());
       if(m_Shooter.readyToShoot()){   
         m_Indexer.shoot();
         //m_IntakeWheels.on();
@@ -110,7 +102,8 @@ public class Bombardier extends SubsystemBase {
 
     boolean reset = DriverStation.isAutonomous()?false:true;
     m_Turret.targetingDisabled(reset);
-    m_Shooter.off();
+    m_Shooter.disable();
+    //m_Shooter.off();
   }
 
 }

@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -31,22 +30,21 @@ public class Turret extends SubsystemBase {
 
   // neo 550 ppr = 42
   
-  // gearbox pulley 24 tooth
+  // gearbox pulley 36 tooth
   // turret pully 210 tooth
 
-  // gearbox to turret ratio : 8.75 (210 / 24)
+  // gearbox to turret ratio : 5.833333 (210 / 36)
   // gear box ratio : 100:1 (per mark)
-  // motor to turret ratio  875:1 (8.75 * 100)
-  // click to to turret revolutions : 36750 (875 * 42)
-  // clicks per degree of rotation : 102.0833333; (36750 / 360)
-  // degress of freedom : 140 (70 left, 70 right)
-  // max click offset allowed per direction : 7146 (70 * 102.083333)
+  // motor to turret ratio  583.33:1 (5.8333 * 100)
+  // click to to turret revolutions : 24499.86 (583.33 * 42)
+  // clicks per degree of rotation : 68.0551667; (24499.86 / 360)
+  // degress of freedom : 60 (30 left, 30 right)
+  // max click offset allowed per direction : 2041.655 (30 * 68.0551667)
 
-  private double clicksPerDegree = -2.5;
+  private double clicksPerDegree = -1.75;//-1.6666667;
   private double m_xOffset = 0.0; // x offset reported by limelight
-  private final int maxOffset = 180; // Maximum x offset allow
-  private final int tolerance = 10; // clicks off target
-  private double error = 2;
+  private final int maxOffset = 56; // Maximum x offset allow
+  private final int tolerance = 2; // clicks off target
 
   public Turret() {
 
@@ -64,9 +62,9 @@ public class Turret extends SubsystemBase {
 
     pidController.setP(0.021 ,0);
     pidController.setI(0.0, 0);
-    pidController.setD(0.001, 0);
+    pidController.setD(0.05, 0);
     pidController.setIZone(0.0, 0);
-    pidController.setFF(0.0, 0);
+    pidController.setFF(0.001, 0);
     pidController.setOutputRange(-1, 1, 0);
 
     m_turretSparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
@@ -88,8 +86,8 @@ public class Turret extends SubsystemBase {
 
     SmartDashboard.putBoolean("onTarget", this.onTarget());
     SmartDashboard.putBoolean("Aquire Target", this.aquireTarget);
-    SmartDashboard.putNumber("turret error", this.error);
-    SmartDashboard.putNumber("Current", current);
+    SmartDashboard.putNumber("turret error", this.m_xOffset);
+    SmartDashboard.putNumber("Current turret position", this.current);
 
     if(aquireTarget){//Bombardier notified turrent to target
       // TrackTarget returns the offset to the target in degrees
@@ -97,7 +95,7 @@ public class Turret extends SubsystemBase {
       // TrackTarget returns no offset(0.0)
       // 1.)add the offset to current position
       current = current + trackTarget();
-      SmartDashboard.putNumber("Current", current);
+      SmartDashboard.putNumber("Current turret position", current);
       //Only apply changes that are less than 90 degrees off starting position
       //if target positions is greater than 90 return 90 with the proper sign(+/-)
       //current = Math.abs(current) <= maxOffset ? current : (Math.signum(current) * maxOffset);
@@ -108,7 +106,7 @@ public class Turret extends SubsystemBase {
       // 4.) update current positoin to position after adjustment and delay
       current = m_encoder.getPosition();
     }
-    SmartDashboard.putNumber("Current", current);
+    SmartDashboard.putNumber("Current turret position", current);
   }
   // OI function *******************************************************************
   public void targetingEnabled(double in_XOffset){
@@ -152,9 +150,11 @@ public class Turret extends SubsystemBase {
 
   public boolean onTarget(){
     // is the pid reporting that on the setpoint within the tolerance
-    
-     this.error = m_xOffset;
-    return Math.abs(error) < tolerance;
+    boolean  retVal = false;
+    if(this.aquireTarget){
+      retVal = Math.abs(m_xOffset) < tolerance;
+    }
+    return retVal;
   }
 
   //***********positive***********************************

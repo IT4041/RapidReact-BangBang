@@ -37,12 +37,12 @@ public class Feeder extends SubsystemBase {
   }
 
   public void on(){
-    sparkMaxFeeder.set(-0.7);
+    sparkMaxFeeder.set(0.7);
     wheelsOn = true;
   }
 
   public void reverse(){
-    sparkMaxFeeder.set(0.7);
+    sparkMaxFeeder.set(-0.7);
   }
 
   public void off(){

@@ -33,7 +33,8 @@ public class Robot extends TimedRobot {
   public RobotContainer m_robotContainer;
   // private Camera camera; 
 
-  String trajectoryJSON = "pathplanner/generatedJSON/SingleBall_Path2.wpilib.json";
+  //String trajectoryJSON = "pathplanner/generatedJSON/SingleBall_Path1.wpilib.json";
+  String trajectoryJSON = "pathplanner/generatedJSON/TwoBall1_Path.wpilib.json";
   Trajectory trajectory_test;
 
   /**
@@ -123,7 +124,8 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    //m_robotContainer.enableAutoIndexing();
+    m_robotContainer.enableAutoIndexing();
+    m_robotContainer.enableShooter();
    
   }
 

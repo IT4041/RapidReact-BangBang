@@ -24,7 +24,7 @@ public class LimeLight extends SubsystemBase {
   // tx Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees)
   // ty Vertical Offset From Crosshair To Target (-20.5 degrees to 20.5 degrees)
   // ta Target Area (0% of image to 100% of image)
-  private final NetworkTable limelightNT = NetworkTableInstance.getDefault().getTable("limelight");
+  private final NetworkTable limelightNT = NetworkTableInstance.getDefault().getTable("limelight-it");
   private NetworkTableEntry tvEntry;
   private NetworkTableEntry txEntry;
   private NetworkTableEntry taEntry;
@@ -37,8 +37,8 @@ public class LimeLight extends SubsystemBase {
   public final int stream = 2; // sets stream layout if another webcam is attached
   public final int snapshot = 0; // 0 - stop snapshots, 1 - 2 Hz
 
-  private double cameraAngle = 46; // degrees
-  private double cameraHeight = 31; // inches(get correct value from build team)
+  private double cameraAngle = 43; // degrees
+  private double cameraHeight = 37; // inches(get correct value from build team)
   private double targetHeight = 103; // inches (center of targets; targets are 2" tall from 102" to 104")
 
   public LimeLight() {
@@ -49,10 +49,27 @@ public class LimeLight extends SubsystemBase {
     limelightNT.getEntry("stream").setNumber(stream);
     limelightNT.getEntry("snapshot").setNumber(snapshot);
 
+    SmartDashboard.putNumber("limelight angle", cameraAngle);
+    SmartDashboard.putNumber("limelight height", cameraHeight);
+
   }
 
   @Override
   public void periodic() {
+
+    //TODO: remove this test code prior to competition
+    double cameraAngleNew = SmartDashboard.getNumber("limelight angle", cameraAngle);
+    if (cameraAngleNew != cameraAngle) {
+      cameraAngle = cameraAngleNew;
+    }
+
+    double cameraHeightNew = SmartDashboard.getNumber("limelight height", cameraHeight);
+    if (cameraHeightNew != cameraHeight) {
+      cameraHeight = cameraHeightNew;
+    }
+    //**************************************************** */
+
+
     // This method will be called once per scheduler run
     tvEntry = limelightNT.getEntry("tv");
     txEntry = limelightNT.getEntry("tx");
@@ -68,9 +85,9 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("tx", tx);
     SmartDashboard.putNumber("ta", ta);
     SmartDashboard.putNumber("ty", ty);
-    SmartDashboard.putBoolean("HasValidTarget", hasValidTarget());
 
-    SmartDashboard.putNumber("distance: ", this.getDistance());
+    SmartDashboard.putBoolean("HasValidTarget", hasValidTarget());
+    SmartDashboard.putNumber("Distance to Target: ", this.getDistance());
 
   }
 
@@ -92,31 +109,6 @@ public class LimeLight extends SubsystemBase {
 
   public double getYOffset() {
     return ty;
-  }
-
-  /* distance calculation from 2019 based in area*/
-  public double getDistanceToTarget() {
-
-    // double o = 2.875; // measured ta value at 120 inches
-    // double k = 203.4; // k = 120*Math.sqrt(ta)
-
-    // DUE TO HARDWARE ZOOM TARGET AREA IS A MUCH LARGER
-    // PORTION OF THE OVERALL VIEW PORT
-
-    // double o = 8.45; // measured ta value at 120 inches
-    // double k = 348.8; // k = 120*Math.sqrt(ta)
-
-    // double delta = o - ta;
-    // delta = Math.cbrt(delta);
-    // delta = delta/12;
-    // delta = ta - delta;
-    // delta = Math.sqrt(delta);
-    // delta = k/delta;
-
-    double temp = 348.8 / (Math.sqrt(ta - ((Math.cbrt(8.45 - ta)) / 12)));
-
-    SmartDashboard.putNumber("distance based on area: ", Math.round(temp));
-    return Math.round(temp);
   }
 
   /* distance calculation base on angle (supplied by 4909) */

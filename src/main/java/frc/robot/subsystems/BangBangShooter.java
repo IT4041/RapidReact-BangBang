@@ -22,16 +22,18 @@ public class BangBangShooter extends SubsystemBase {
   private final CANSparkMax sparkMax2;
   private final RelativeEncoder encoder;
 
-  private double minRPM = 1000;
   private int accumulator = 0;
-  private double RPM_Target = 12;
+  private double RPM_Target = 0;
   private double rpmTolerance = 50;
+  private double RPM_multiplication_factor = 0.001;
+  private double scaledVelo = 0;
 
   private double kstatic = 0.0008;
   private double kvelocity = 0.19;
   private double kacceleraton = 0.13;
 
   private boolean enabled = false;
+  private boolean isTele = false;
 
   /** Creates a new BangBangShooter. */
   public BangBangShooter() {
@@ -54,18 +56,21 @@ public class BangBangShooter extends SubsystemBase {
     sparkMax1.enableVoltageCompensation(12);
     sparkMax2.enableVoltageCompensation(12);
 
-    //encoder.setVelocityConversionFactor(0.036);
-
     SmartDashboard.putNumber("Calculated RPMS", 0);
     SmartDashboard.putBoolean("Ready to Shoot", false);
     SmartDashboard.putNumber("Actual RPMS", 0);
     SmartDashboard.putNumber("RPM diff", 0);
-    SmartDashboard.putNumber("Shooter RPM", RPM_Target);
+    SmartDashboard.putNumber("Target RPM", RPM_Target);
     SmartDashboard.putNumber("BangBangOutPut", 0);
     SmartDashboard.putNumber("FeedFowardOutput", 0);
     SmartDashboard.putBoolean("Shooter Enabled", enabled);
-
     SmartDashboard.putNumber("kstatic", kstatic);
+    SmartDashboard.putNumber("RPM_multiplication_factor", RPM_multiplication_factor);
+    SmartDashboard.putNumber("scaledVelo", scaledVelo);
+    SmartDashboard.putNumber("rpmTolerance", rpmTolerance);
+    SmartDashboard.putNumber("accumulator", 0);
+    SmartDashboard.putBoolean("atSpeed", false);
+    SmartDashboard.putBoolean("isTele", isTele);
 
   }
 
@@ -73,77 +78,92 @@ public class BangBangShooter extends SubsystemBase {
   public void periodic() {
 
     SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
+    SmartDashboard.putNumber("scaledVelo", scaledVelo);
 
-    double targetRPM = SmartDashboard.getNumber("Shooter RPM", RPM_Target);
-    if (targetRPM != RPM_Target) {
-      RPM_Target = targetRPM;
+    //TODO: remove this test code prior to competition
+    // double targetRPM = SmartDashboard.getNumber("Target RPM", RPM_Target);
+    // if (targetRPM != RPM_Target) {
+    //   RPM_Target = targetRPM;
+    // }
+
+    double newRPM_multiplication_factor = SmartDashboard.getNumber("RPM_multiplication_factor", RPM_multiplication_factor);
+    if (newRPM_multiplication_factor != RPM_multiplication_factor) {
+      RPM_multiplication_factor = newRPM_multiplication_factor;
     }
 
+    double newrpmTolerance = SmartDashboard.getNumber("rpmTolerance", rpmTolerance);
+    if (newrpmTolerance != rpmTolerance) {
+      rpmTolerance = newrpmTolerance;
+    }
+
+    SmartDashboard.putNumber("Target RPM", RPM_Target);
     double BangBangOutPut = bangBangController.calculate(encoder.getVelocity(), RPM_Target) + 0.9 * feedforward.calculate(RPM_Target);
     double FeedFowardOutput = feedforward.calculate(RPM_Target);
     SmartDashboard.putNumber("BangBangOutPut", BangBangOutPut);
     SmartDashboard.putNumber("FeedFowardOutput", FeedFowardOutput);
 
     SmartDashboard.putBoolean("Shooter Enabled", enabled);
-    SmartDashboard.putNumber("RPM diff", (RPM_Target*309) - encoder.getVelocity());
+    SmartDashboard.putNumber("RPM diff", (RPM_Target * RPM_multiplication_factor) - encoder.getVelocity());
 
-    // TODO: check all conversions and unit and everything else before trying this
-    // check relative encoder get velocity to make sure it's reporting the same things as encoder.getrate()
-    if(enabled){
-      sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));  
-      this.readyToShoot();
-    }else{//disabled
-      sparkMax2.set(0.0);
+    if(isTele){
+      if(enabled){
+        sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));  
+        this.readyToShoot();
+      }else{//disabled
+        sparkMax2.set(0.0);
+      }
     }
-      
-
+    else{
+      sparkMax2.set(RPM_Target);
+    }
   }
 
-  // private double calculateRPMs(double distance) {
+  private double calculateRPMs(double distance) {
 
-  //   double finalRPMS;
+    double bbControllerValue;
 
-  //   // calculate rpms
-  //   finalRPMS = distance * RPM_Target;
-
-  //   // use min rpms if calculated value is below min threshold
-  //   finalRPMS = (finalRPMS < minRPM) ? minRPM : finalRPMS;
-  //   SmartDashboard.putNumber("Calculated RPMS", -finalRPMS);
-  //   return -finalRPMS;
-  // }
+    //Tommy's formula: y= -4808.15*.99^x+5800
+    double temp = (-4808.15 * Math.pow(.99,distance)) + 5800;
+    bbControllerValue = temp * RPM_multiplication_factor;
+    
+    SmartDashboard.putNumber("Calculated RPMS", bbControllerValue);
+    return bbControllerValue;
+  }
 
   public boolean readyToShoot() {
+
     boolean atSpeed = false;
     double measuredVelo = encoder.getVelocity();
-    double scaledVelo = this.RPM_Target * 309;
+    this.scaledVelo = this.RPM_Target * 1000;
+    SmartDashboard.putNumber("scaledVelo", this.scaledVelo);
+    SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
 
-    if (measuredVelo <= (scaledVelo + rpmTolerance) && measuredVelo >= (scaledVelo - this.rpmTolerance) && measuredVelo > this.minRPM) {
+    if(Math.abs(measuredVelo) <= (Math.abs(scaledVelo) + Math.abs(rpmTolerance)) && Math.abs(measuredVelo) >= (Math.abs(scaledVelo) - Math.abs(rpmTolerance))){
       atSpeed = true;
       accumulator++;
     }
+
     SmartDashboard.putNumber("RPM diff", scaledVelo - measuredVelo);
     SmartDashboard.putBoolean("Ready to Shoot", atSpeed && accumulator > 2);
-
+    SmartDashboard.putNumber("accumulator", accumulator);
+    SmartDashboard.putBoolean("atSpeed", atSpeed);
+    
+    //return bangBangController.atSetpoint();
     return atSpeed && accumulator > 2;
   }
 
   public void on(double distance) {
-    // velocity = this.calculateRPMs(distance);
+    RPM_Target = this.calculateRPMs(distance);
   }
 
   public void off() {
-    // accumulator = 0;
-    // velocity = this.calculateRPMs(0);
+    accumulator = 0;
+    RPM_Target = 0;//this.calculateRPMs(0);
   }
 
   public void failSafeShoot(){
-    // this.off();
-    // sparkMax1.set(.5);
-  }
-
-  public void autoShoot(){
-    // this.off();
-    // sparkMax1.set(-.65);
+    this.off();
+    sparkMax1.set(.5);
   }
   
   public void enable(){
@@ -154,17 +174,21 @@ public class BangBangShooter extends SubsystemBase {
     enabled = false;
   }
 
+  public void setIsTele(){
+    isTele = true;
+  }
+
   public void setShotRpmFar(){
-    this.setRPM(4);
+    this.setRPM(0.3);
   }
 
   public void setShotRpmClose(){
-    this.setRPM(3);
+    this.setRPM(0.2);
   }
 
   public void setRPM(double rpm){
     this.RPM_Target = rpm;
-    SmartDashboard.putNumber("Shooter RPM", this.RPM_Target);
+    SmartDashboard.putNumber("Target RPM", this.RPM_Target);
   }
 
 }
