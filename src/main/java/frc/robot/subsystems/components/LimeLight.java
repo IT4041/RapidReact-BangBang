@@ -58,15 +58,15 @@ public class LimeLight extends SubsystemBase {
   public void periodic() {
 
     //TODO: remove this test code prior to competition
-    double cameraAngleNew = SmartDashboard.getNumber("limelight angle", cameraAngle);
-    if (cameraAngleNew != cameraAngle) {
-      cameraAngle = cameraAngleNew;
-    }
+    // double cameraAngleNew = SmartDashboard.getNumber("limelight angle", cameraAngle);
+    // if (cameraAngleNew != cameraAngle) {
+    //   cameraAngle = cameraAngleNew;
+    // }
 
-    double cameraHeightNew = SmartDashboard.getNumber("limelight height", cameraHeight);
-    if (cameraHeightNew != cameraHeight) {
-      cameraHeight = cameraHeightNew;
-    }
+    // double cameraHeightNew = SmartDashboard.getNumber("limelight height", cameraHeight);
+    // if (cameraHeightNew != cameraHeight) {
+    //   cameraHeight = cameraHeightNew;
+    // }
     //**************************************************** */
 
 

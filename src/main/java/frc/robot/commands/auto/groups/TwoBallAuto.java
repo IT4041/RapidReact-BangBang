@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.auto.groups;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -22,9 +18,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class TwoBallAuto extends SequentialCommandGroup {
 
   private BangBangShooter m_shooter;
@@ -37,8 +30,7 @@ public class TwoBallAuto extends SequentialCommandGroup {
 
   /** Creates a new AutoTest3. */
   public TwoBallAuto(Turret in_turret, BangBangShooter in_shooter, IntakeElbow in_intakeElbow, Indexer in_Indexer, IntakeWheels in_intakeWheels, DriveTrain in_drivetrain, Trajectory in_trajectory) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     m_shooter = in_shooter;
     m_intakeElbow = in_intakeElbow;
     m_Indexer = in_Indexer;
@@ -86,15 +78,19 @@ public class TwoBallAuto extends SequentialCommandGroup {
 
     addCommands(
       new InstantCommand(m_intakeElbow::down,m_intakeElbow),
+      new WaitCommand(.2),
+      new InstantCommand(m_turret::turn10degreesNegative,m_turret),//1
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
       new InstantCommand(m_shooter::setShotRpmClose,m_shooter),
       new InstantCommand(m_shooter::enable,m_shooter),
       new WaitCommand(1),
       new InstantCommand(m_Indexer::shoot, m_Indexer),
-      new WaitCommand(1.5),
+      new WaitCommand(1),
       new InstantCommand(m_Indexer::off, m_Indexer),
-      new InstantCommand(m_turret::turn30degreesPositive,m_turret),
-      new InstantCommand(m_turret::turn5degreesPositive,m_turret),
+      new InstantCommand(m_turret::turn10degreesPositive,m_turret),//-1
+      new InstantCommand(m_turret::turn30degreesPositive,m_turret),//2
+      new InstantCommand(m_turret::turn30degreesPositive,m_turret),//3
+      new InstantCommand(m_turret::turn10degreesPositive,m_turret),//4
       new InstantCommand(m_shooter::disable,m_shooter),
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
@@ -107,15 +103,16 @@ public class TwoBallAuto extends SequentialCommandGroup {
       new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
       new InstantCommand(m_Indexer::shoot, m_Indexer),
       new WaitCommand(2),
-      new InstantCommand(m_Indexer::off, m_Indexer),
       new InstantCommand(m_shooter::disable,m_shooter),
       new InstantCommand(m_shooter::setIsTele,m_shooter),
-      new InstantCommand(m_turret::turn5degreesNegative,m_turret),
-      new InstantCommand(m_turret::turn30degreesNegative,m_turret),
-      new WaitCommand(2),
+      new InstantCommand(m_turret::turn30degreesNegative,m_turret),//-2
+      new InstantCommand(m_turret::turn30degreesNegative,m_turret),//-3
+      new InstantCommand(m_turret::turn10degreesNegative,m_turret),//-4
+      new WaitCommand(1),
       
-      // remove this prior to comp
-      new InstantCommand(m_intakeElbow::home,m_intakeElbow)
+      //TODO: remove this prior to comp
+      new InstantCommand(m_intakeElbow::up,m_intakeElbow),
+      new InstantCommand(m_Indexer::off, m_Indexer)
     );
   }
 }

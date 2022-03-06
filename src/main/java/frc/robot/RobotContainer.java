@@ -8,8 +8,6 @@
 package frc.robot;
 
 import edu.wpi.first.math.trajectory.Trajectory;
-//import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.auto.groups.SingleBallAuto;
 import frc.robot.commands.auto.groups.ThreeBallAuto;
-import frc.robot.commands.auto.groups.TrajectoryOnly;
 import frc.robot.commands.auto.groups.TwoBallAuto;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
@@ -50,7 +47,8 @@ public class RobotContainer {
 
   public final DriveTrain driveTrain = new DriveTrain(navX);
   private final Feeder feeder = new Feeder();
-  private final Lift elevator = new Lift();
+  private final Lift lift = new Lift();
+  private final Arms arms = new Arms();
   private final Indexer indexer = new Indexer(rangeSensors,feeder);
   private final IntakeElbow intakeElbow = new IntakeElbow();
   private final IntakeWheels intakeWheels = new IntakeWheels(feeder);
@@ -106,14 +104,29 @@ public class RobotContainer {
 
     JoystickButton buttonA_dr = new JoystickButton(driver, Constants.OIConstants.buttonA);
     JoystickButton buttonY_dr = new JoystickButton(driver, Constants.OIConstants.buttonY);
-    JoystickButton buttonSelect_dr = new JoystickButton(driver, Constants.OIConstants.buttonSelect);
-    AxisJoystickButton triggerRight = new AxisJoystickButton(driver, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
-    
-    triggerRight.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
-    triggerRight.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
-    buttonA_dr.whenPressed(new InstantCommand(elevator::up,elevator));
-    buttonY_dr.whenPressed(new InstantCommand(elevator::down, elevator));
+    JoystickButton buttonX_dr = new JoystickButton(driver, Constants.OIConstants.buttonX);
+    JoystickButton buttonB_dr = new JoystickButton(driver, Constants.OIConstants.buttonB);
+
+    JoystickButton buttonBumperLeft_dr = new JoystickButton(driver, Constants.OIConstants.buttonBumperLeft);
+
+    JoystickButton buttonSelect_dr = new JoystickButton(driver, Constants.OIConstants.buttonSelect);
+
+    // AxisJoystickButton triggerRight = new AxisJoystickButton(driver, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
+    // triggerRight.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
+    // triggerRight.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
+
+    AxisJoystickButton triggerRight_as = new AxisJoystickButton(assist, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
+    triggerRight_as.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
+    triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
+
+    buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
+    buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
+
+    buttonX_dr.whenPressed(new InstantCommand(arms::forward,arms));
+    buttonB_dr.whenPressed(new InstantCommand(arms::back,arms));
+
+    buttonBumperLeft_dr.whenPressed(new InstantCommand(arms::home, arms));
 
     // in an emergency allow user to take over control
     buttonSelect_dr.whenPressed(new InstantCommand(bombardier::togglFailSafe,bombardier));
@@ -130,7 +143,7 @@ public class RobotContainer {
     buttonB_as.whenPressed(new InstantCommand(intakeWheels::off,intakeWheels));
 
     buttonA_as.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow));
-    buttonY_as.whenPressed(new InstantCommand(intakeElbow::home,intakeElbow));
+    buttonY_as.whenPressed(new InstantCommand(intakeElbow::up,intakeElbow));
 
     buttonBumperRight_as.whenPressed(new InstantCommand(intakeWheels::reverse,intakeWheels));
     buttonBumperRight_as.whenReleased(new InstantCommand(intakeWheels::returnToPrevState,intakeWheels));
@@ -139,7 +152,6 @@ public class RobotContainer {
     buttonBumperLeft_as.whenReleased(new InstantCommand(indexer::off, indexer));
 
   }
-
 
   public Command getAutonomousCommand() {
     System.out.println("getAutonomousCommand");
@@ -156,5 +168,9 @@ public class RobotContainer {
 
   public void enableShooter() {
     bbshooter.enable();
+  }
+
+  public void isTele() {
+    bbshooter.setIsTele();
   }
 }

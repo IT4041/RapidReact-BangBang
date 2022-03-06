@@ -7,116 +7,84 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-// import frc.robot.Constants;
+import frc.robot.Constants;
 
-// import com.revrobotics.CANSparkMax;
-// import com.revrobotics.RelativeEncoder;
-// import com.revrobotics.CANSparkMax.IdleMode;
-// import com.revrobotics.CANSparkMax.SoftLimitDirection;
-// import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-// import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 
 public class Lift extends SubsystemBase {
 
-  // private double kP, kI, kD, kF;
-  // private int curr_position;
-  //private boolean okToDescend, decsending;
-  // private static final CANSparkMax liftLeftSparkMax = new CANSparkMax(Constants.LiftConstants.LiftLeftSparkMax, MotorType.kBrushless);
-  // private static final CANSparkMax liftRightSparkMax = new CANSparkMax(Constants.LiftConstants.LiftRightSSparkMax, MotorType.kBrushless);
-  
-  // private final SparkMaxPIDController leftSmartMaxPIDController;
-  // private final RelativeEncoder leftSmartMaxEncoder;
+  private static final CANSparkMax liftSparkMax = new CANSparkMax(Constants.LiftConstants.LiftSparkMax, MotorType.kBrushless);
+  private final SparkMaxPIDController pidController;
+  private final RelativeEncoder encoder;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
-  /**
-   * Creates a new lift.
-   */
   public Lift() {
-
-    //okToDescend = false;
-    //decsending = false;
-    // kP = 0.025;
-    // kI = 0;
-    // kD = 0;
-    // kF = 0;
-
-    // liftLeftSparkMax.restoreFactoryDefaults();
-    // liftRightSparkMax.restoreFactoryDefaults();
-
-    // liftLeftSparkMax.setInverted(false);
-    // liftRightSparkMax.setInverted(false);
-
-    // // right(3) should follow left(5), this sets the voltage to mirror, all other settings must be distinctly set on both controllers.
-    // liftRightSparkMax.follow(liftLeftSparkMax);
-
-    // liftLeftSparkMax.set(0.0);
-
-    // //configure the left lift motor
-    // liftLeftSparkMax.clearFaults();
-    // liftLeftSparkMax.enableVoltageCompensation(12);
-    // liftLeftSparkMax.setSmartCurrentLimit(40, 20, 10);
-    // liftLeftSparkMax.setIdleMode(IdleMode.kBrake);
-    // liftLeftSparkMax.setSoftLimit(SoftLimitDirection.kForward, 30);
-    // liftLeftSparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
-    // liftLeftSparkMax.setSoftLimit(SoftLimitDirection.kReverse, 30);
-    // liftLeftSparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
-    // liftLeftSparkMax.setClosedLoopRampRate(1.5);
-    // liftLeftSparkMax.setSecondaryCurrentLimit(120, 30);
-
-    // //initialize Left PID and encoder
-    // leftSmartMaxPIDController = liftLeftSparkMax.getPIDController();
-    // leftSmartMaxEncoder = liftLeftSparkMax.getEncoder();
-    // leftSmartMaxPIDController.setI(kI);
-    // leftSmartMaxPIDController.setP(kP);
-    // leftSmartMaxPIDController.setD(kD);
-    // leftSmartMaxPIDController.setFF(kF);
-    // leftSmartMaxPIDController.setSmartMotionMaxVelocity(20, 1);
     
+    liftSparkMax.restoreFactoryDefaults();
+    pidController = liftSparkMax.getPIDController();
+    encoder = liftSparkMax.getEncoder();
 
-    // //configure the right lift motor
-    // liftRightSparkMax.clearFaults();
-    // liftRightSparkMax.enableVoltageCompensation(12);
-    // liftRightSparkMax.setSmartCurrentLimit(40, 20, 10);
-    // liftRightSparkMax.setIdleMode(IdleMode.kBrake);
-    // liftRightSparkMax.setSecondaryCurrentLimit(95, 250);
+    // PID coefficients
+    kP = 0.025;
+    kI = 0;
+    kD = 0.001; 
+    kIz = 0; 
+    kFF = 0.04; 
+    kMaxOutput = 1; 
+    kMinOutput = -1;
 
+    // set PID coefficients
+    pidController.setP(kP);
+    pidController.setI(kI);
+    pidController.setD(kD);
+    pidController.setIZone(kIz);
+    pidController.setFF(kFF);
+    pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // //pre-flight checklist to make sure lift is all the way @ bottom
-    // curr_position = Constants.LiftPositions.Home;
+    liftSparkMax.setSoftLimit(SoftLimitDirection.kForward, Constants.LiftConstants.Home);
+    liftSparkMax.setSoftLimit(SoftLimitDirection.kReverse, Constants.LiftConstants.Top);
+
+    liftSparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+    liftSparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
+    liftSparkMax.setSmartCurrentLimit(40, 20, 10);
+    liftSparkMax.clearFaults();
+    liftSparkMax.enableVoltageCompensation(12);
+    liftSparkMax.setIdleMode(IdleMode.kBrake);
+    liftSparkMax.setClosedLoopRampRate(1.0);
+    liftSparkMax.setSecondaryCurrentLimit(95, 250);
+
+    encoder.setPosition(Constants.LiftConstants.Home);
+    SmartDashboard.putNumber("Lift position", encoder.getPosition());
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    //okToDescend = (curr_position == Constants.liftPositions.Top && Math.abs(liftLeftSparkMax.getClosedLoopError()) < 3000);
+    SmartDashboard.putNumber("Lift position", encoder.getPosition());
   }
 
   public void up() {
-    // curr_position = Constants.LiftPositions.Top;
-    // this.setPosition(Constants.LiftPositions.Top);
+    this.setPosition(Constants.LiftConstants.Top);
   }
 
   public void down() {
-    // //if(okToDescend || decsending){
-    //   //decsending = true;
-    //   curr_position -= Constants.LiftPositions.Increment;
-    //   if(curr_position > Constants.LiftPositions.Increment){
-    //     this.setPosition(curr_position);
-    //   }
-    //   else{
-    //     curr_position = Constants.LiftPositions.Increment; 
-    //     this.setPosition(curr_position);
-    //   }
-    // //}
+    this.setPosition(Constants.LiftConstants.Home);
   }
 
   private void setPosition(double position) {
-    // leftSmartMaxEncoder.setPosition(position);
+    pidController.setReference(position, ControlType.kPosition);
   }
 
   public void stop() {
-    // //only set the left motor, the right motor is set to follow
-    // liftLeftSparkMax.set(0.0);
+    liftSparkMax.set(0.0);
   }
 
 }

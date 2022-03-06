@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.components.*;
 
@@ -38,8 +39,9 @@ public class Bombardier extends SubsystemBase {
     m_LimeLight = in_LimeLight;
     // m_IntakeWheels = in_IntakeWheels;
     // m_bbShooter = null;
-  }
 
+    SmartDashboard.putBoolean("FailSafe", m_failSafe);
+  }
 
   @Override
   public void periodic() {
@@ -50,7 +52,7 @@ public class Bombardier extends SubsystemBase {
     } else {
       this.stopTargeting();
     }
-
+    SmartDashboard.putBoolean("FailSafe", m_failSafe);
   }
 
   public void togglFailSafe() {
@@ -73,6 +75,7 @@ public class Bombardier extends SubsystemBase {
       // distance calculation,
       // and shooter head rpm adjustment
       m_target = true;
+      m_Turret.targetingEnabled(0);
     }
   }
 

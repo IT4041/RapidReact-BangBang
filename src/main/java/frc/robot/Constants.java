@@ -19,18 +19,10 @@ public class Constants {
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                 kTrackwidthMeters);
 
-        // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-        // These characterization values MUST be determined either experimentally or
-        // theoretically
-        // for *your* robot's drive.
-        // The Robot Characterization Toolsuite provides a convenient tool for obtaining
-        // these
-        // values for your robot.
         public static final double ksVolts = 0.73483;
         public static final double kvVoltSecondsPerMeter = 1.8058;
         public static final double kaVoltSecondsSquaredPerMeter = 0.30098;
 
-        // Example value only - as above, this must be tuned for your drive!
         public static final double kPDriveVel = 0.00030372; //0.3872;
 
 
@@ -94,13 +86,6 @@ public class Constants {
 
     }
 
-    public static final class LiftPositions {
-        public static final int Top = 768000; // 752000 actual number;
-        public static final int Hover = 375000;
-        public static final int Increment = 192000;
-        public static final int Home = 0;
-    }
-
     public static final class TurrentConstants {
         public static final int TurretSparkMax = 2; 
     }
@@ -108,13 +93,14 @@ public class Constants {
     public static final class ShooterConstants {
         public static final int ShooterSparkMax1 = 4; 
         public static final int ShooterSparkMax2 = 5;
-
     }
 
     public static final class IntakeConstants {
         public static final int IntakeElbowSparkMax = 10;
         public static final int IntakeWheelsSparkMax = 6;
         public static final int IntakeFeederSparkMax = 9;
+        public static final int Down = -105;
+        public static final int Home = 0;
     }
 
 	public static final class RangeSensorConstants {
@@ -128,8 +114,17 @@ public class Constants {
 	}
 
 	public static final class LiftConstants {
-        public static final int LiftLeftSparkMax = 11;
-        public static final int LiftRightSSparkMax = 8;
+        public static final int LiftSparkMax = 32;
+        public static final int Top = -558;
+        public static final int Home = 0;
     }
+
+    public static final class ArmsConstants {
+        public static final int ArmsSparkMax = 8;
+        public static final int Forward = -100;
+        public static final int Home = 0;
+        public static final int Back = 50;
+    }
+    
 
 }
