@@ -125,6 +125,10 @@ public class Constants {
         public static final int Home = 0;
         public static final int Back = 50;
     }
+
+    public static final class LimitSwitchConstants {
+        public static final int ElbowLimitSwitch = 0;
+    }
     
 
 }

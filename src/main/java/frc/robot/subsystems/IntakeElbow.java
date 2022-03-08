@@ -10,6 +10,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.components.MagneticLimitSwitch;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
@@ -23,6 +25,7 @@ public class IntakeElbow extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private RelativeEncoder encoder;
+  private MagneticLimitSwitch limit;
 
   public IntakeElbow() {
 
@@ -30,6 +33,7 @@ public class IntakeElbow extends SubsystemBase {
     sparkMax.restoreFactoryDefaults();
     pidController = sparkMax.getPIDController();
     encoder = sparkMax.getEncoder();
+    limit = new MagneticLimitSwitch();
 
     // PID coefficients
     kP = 0.013;
@@ -62,6 +66,10 @@ public class IntakeElbow extends SubsystemBase {
     sparkMax.setSecondaryCurrentLimit(95, 250);
 
     encoder.setPosition(Constants.IntakeConstants.Home);
+    if(limit.isTriggered()){
+      encoder.setPosition(Constants.IntakeConstants.Down);
+    }
+    
     SmartDashboard.putNumber("elbow position", encoder.getPosition());
 
   }

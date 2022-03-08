@@ -34,6 +34,7 @@ public class BangBangShooter extends SubsystemBase {
 
   private boolean enabled = false;
   private boolean isTele = false;
+  private boolean failSafe = false;
 
   /** Creates a new BangBangShooter. */
   public BangBangShooter() {
@@ -107,9 +108,12 @@ public class BangBangShooter extends SubsystemBase {
 
     //if(false){
     if(isTele){
+
       if(enabled){
         sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));  
         this.readyToShoot();
+      }else if(failSafe){
+        sparkMax2.set(RPM_Target);
       }else{//disabled
         sparkMax2.set(0.0);
       }
@@ -161,6 +165,10 @@ public class BangBangShooter extends SubsystemBase {
 
   public void failSafeShoot(){
     this.setRPM(0.56);
+  }
+
+  public void setFailSafe(boolean inFailSafe){
+    this.failSafe = inFailSafe;
   }
   
   public void enable(){

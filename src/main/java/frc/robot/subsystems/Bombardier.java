@@ -57,6 +57,7 @@ public class Bombardier extends SubsystemBase {
 
   public void togglFailSafe() {
     m_failSafe = !m_failSafe;
+    m_Shooter.setFailSafe(m_failSafe);
   }
 
   // parameterless functions for inlining ********************

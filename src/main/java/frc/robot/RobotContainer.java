@@ -121,7 +121,8 @@ public class RobotContainer {
     triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
     buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
-    buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
+    //buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
+    buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::down,lift)));
 
     buttonX_dr.whenPressed(new InstantCommand(arms::forward,arms));
     buttonB_dr.whenPressed(new InstantCommand(arms::back,arms));
