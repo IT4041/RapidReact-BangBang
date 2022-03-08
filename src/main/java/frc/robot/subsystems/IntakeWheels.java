@@ -17,14 +17,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class IntakeWheels extends SubsystemBase {
 
   private static final CANSparkMax sparkMaxWheels = new CANSparkMax(Constants.IntakeConstants.IntakeWheelsSparkMax, MotorType.kBrushless); 
-  private boolean wheelsOn;
-  private Feeder m_feeder;
+  private boolean wheelsOn = false;
   /**
    * Creates a new IntakeWheels.
    */ 
-  public IntakeWheels(Feeder in_feeder) {
-
-    m_feeder = in_feeder;
+  public IntakeWheels() {
 
     sparkMaxWheels.restoreFactoryDefaults();
     sparkMaxWheels.clearFaults();
@@ -45,19 +42,16 @@ public class IntakeWheels extends SubsystemBase {
 
   public void on(){
     sparkMaxWheels.set(0.85);
-    m_feeder.on();
     wheelsOn = true;
   }
 
   public void reverse(){
     sparkMaxWheels.set(-0.85);
-    m_feeder.reverse();
   }
 
   public void off(){
     sparkMaxWheels.set(0.0); 
     wheelsOn = false;
-    m_feeder.off();
   }
 
   public void returnToPrevState(){

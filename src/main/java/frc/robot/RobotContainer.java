@@ -23,16 +23,6 @@ import frc.robot.controllers.AxisJoystickButton.ThresholdType;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.components.*;
 
-/**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in
- * the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of
- * the robot
- * (including subsystems, commands, and button mappings) should be declared
- * here.
- */
 public class RobotContainer {
 
   // The robot's subsystems and commands are defined here...
@@ -49,12 +39,12 @@ public class RobotContainer {
   private final Feeder feeder = new Feeder();
   private final Lift lift = new Lift();
   private final Arms arms = new Arms();
-  private final Indexer indexer = new Indexer(rangeSensors,feeder);
+  private final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow();
-  private final IntakeWheels intakeWheels = new IntakeWheels(feeder);
+  private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
   private final BangBangShooter bbshooter = new BangBangShooter();
-  private final Bombardier bombardier = new Bombardier(indexer, turret, bbshooter, limeLight, intakeWheels);
+  private final MasterContoller bombardier = new MasterContoller(indexer, turret, bbshooter, limeLight, intakeWheels, feeder);
 
   private SendableChooser<Command> m_chooser;
   private Trajectory[] m_trajectories;
@@ -121,8 +111,8 @@ public class RobotContainer {
     triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
     buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
-    //buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
-    buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::down,lift)));
+    buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
+    //buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::down,lift)));
 
     buttonX_dr.whenPressed(new InstantCommand(arms::forward,arms));
     buttonB_dr.whenPressed(new InstantCommand(arms::back,arms));
@@ -138,19 +128,15 @@ public class RobotContainer {
     JoystickButton buttonB_as = new JoystickButton(assist, Constants.OIConstants.buttonB);
 
     JoystickButton buttonBumperRight_as = new JoystickButton(assist, Constants.OIConstants.buttonBumperRight);
-    JoystickButton buttonBumperLeft_as = new JoystickButton(assist, Constants.OIConstants.buttonBumperLeft);
 
-    buttonX_as.whenPressed(new InstantCommand(intakeWheels::on,intakeWheels));
-    buttonB_as.whenPressed(new InstantCommand(intakeWheels::off,intakeWheels));
+    buttonX_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOn,bombardier));
+    buttonB_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOff,bombardier));
 
     buttonA_as.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow));
     buttonY_as.whenPressed(new InstantCommand(intakeElbow::up,intakeElbow));
 
-    buttonBumperRight_as.whenPressed(new InstantCommand(intakeWheels::reverse,intakeWheels));
-    buttonBumperRight_as.whenReleased(new InstantCommand(intakeWheels::returnToPrevState,intakeWheels));
-
-    buttonBumperLeft_as.whenPressed(new InstantCommand(indexer::reverseIndexer, indexer));
-    buttonBumperLeft_as.whenReleased(new InstantCommand(indexer::off, indexer));
+    buttonBumperRight_as.whenPressed(new InstantCommand(bombardier::reverseAll,bombardier));
+    buttonBumperRight_as.whenReleased(new InstantCommand(bombardier::returnToPrevState,bombardier));
 
   }
 
