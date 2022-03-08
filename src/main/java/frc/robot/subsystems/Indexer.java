@@ -21,13 +21,13 @@ public class Indexer extends SubsystemBase {
 
   private final CANSparkMax m_indexerSparkMax = new CANSparkMax(Constants.IndexerConstants.IndexerSparkMax, MotorType.kBrushless);
   private RangeSensors m_RangeSensors;
-  private Feeder m_feeder;
   private boolean m_automate = false;
   private boolean m_bumped = false;
 
-  public Indexer(RangeSensors in_RangeSensors, Feeder in_feeder) {
+  private boolean on = false;
+
+  public Indexer(RangeSensors in_RangeSensors) {
     m_RangeSensors = in_RangeSensors;
-    m_feeder = in_feeder;
 
     m_indexerSparkMax.restoreFactoryDefaults();
     m_indexerSparkMax.clearFaults();
@@ -52,10 +52,10 @@ public class Indexer extends SubsystemBase {
         
         if (m_RangeSensors.IntakeTriggered() || m_RangeSensors.bottomTriggered()){// we have bottom ball and no top
           m_indexerSparkMax.set(0.8);// index
-          //m_feeder.on();
+          on = true;
         } else {
           m_indexerSparkMax.set(0.0);// don't index we have no balls
-          m_feeder.off();
+          on = false;
         }
         this.m_bumped = false;
       } 
@@ -67,17 +67,18 @@ public class Indexer extends SubsystemBase {
         this.m_bumped = true;
       }
     }
+    on=false;
   }
 
   public void shoot() {
     // lift balls fast for shooting
     m_indexerSparkMax.set(1);
-    //m_feeder.on();
+    on = true;
   }
 
   public void off(){
     m_indexerSparkMax.set(0.0);
-    m_feeder.off();
+    on = false;
   }
 
   private void bumpBack() {
@@ -90,9 +91,8 @@ public class Indexer extends SubsystemBase {
  
   }
 
-  public void reverseIndexer() {
+  public void reverse() {
     m_indexerSparkMax.set(-0.95);
-    m_feeder.reverse();
   }
 
   public void setAutoIndexOn() {
@@ -101,6 +101,10 @@ public class Indexer extends SubsystemBase {
 
   public void setAutoIndexOff() {
     m_automate = false;
+  }
+
+  public boolean IsOn(){
+    return on;
   }
 
 }

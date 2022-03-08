@@ -112,8 +112,8 @@ public class ThreeBallAuto extends SequentialCommandGroup {
       new WaitCommand(1.5),
       new InstantCommand(m_shooter::disable,m_shooter),
       new InstantCommand(m_Indexer::off, m_Indexer),
-      // new InstantCommand(m_turret::turn30degreesPositive,m_turret),
-      // new InstantCommand(m_turret::turn5degreesPositive,m_turret),
+      new InstantCommand(m_turret::turn30degreesPositive,m_turret),
+      new InstantCommand(m_turret::turn5degreesPositive,m_turret),
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
 
@@ -127,8 +127,8 @@ public class ThreeBallAuto extends SequentialCommandGroup {
       new WaitCommand(1.5),
       new InstantCommand(m_shooter::disable,m_shooter),
       new InstantCommand(m_Indexer::off, m_Indexer),
-      // new InstantCommand(m_turret::turn5degreesNegative,m_turret),
-      // new InstantCommand(m_turret::turn30degreesNegative,m_turret),
+      new InstantCommand(m_turret::turn5degreesNegative,m_turret),
+      new InstantCommand(m_turret::turn30degreesNegative,m_turret),
       new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
       new InstantCommand(m_intakeWheels::on,m_intakeWheels),
 

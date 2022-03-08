@@ -7,19 +7,23 @@ package frc.robot.subsystems.components;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MagneticLimitSwitch extends SubsystemBase {
   /** Creates a new MagneticLimitSwitch. */
 
   private DigitalInput limitSwitch = new DigitalInput(Constants.LimitSwitchConstants.ElbowLimitSwitch);
-  private boolean triggered = false;
+  private boolean triggered = this.getLimitSwitchState();
 
-  public MagneticLimitSwitch() {}
+  public MagneticLimitSwitch() {
+    SmartDashboard.putBoolean("Limit triggered", this.triggered);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     this.triggered = this.getLimitSwitchState();
+    SmartDashboard.putBoolean("Limit triggered", this.triggered);
   }
 
   private boolean getLimitSwitchState() {

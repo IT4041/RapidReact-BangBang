@@ -64,10 +64,11 @@ public class IntakeElbow extends SubsystemBase {
     sparkMax.setIdleMode(IdleMode.kBrake);
     sparkMax.setClosedLoopRampRate(1.0);
     sparkMax.setSecondaryCurrentLimit(95, 250);
-
-    encoder.setPosition(Constants.IntakeConstants.Home);
+    
     if(limit.isTriggered()){
       encoder.setPosition(Constants.IntakeConstants.Down);
+    }else{
+      encoder.setPosition(Constants.IntakeConstants.Home);
     }
     
     SmartDashboard.putNumber("elbow position", encoder.getPosition());

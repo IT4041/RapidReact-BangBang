@@ -14,31 +14,28 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Feeder extends SubsystemBase {
 
   private static final CANSparkMax sparkMaxFeeder = new CANSparkMax(Constants.IntakeConstants.IntakeFeederSparkMax, MotorType.kBrushless); 
-  private boolean wheelsOn;
+
   /** Creates a new Feeder. */
   public Feeder() {
 
     sparkMaxFeeder.restoreFactoryDefaults();
     sparkMaxFeeder.clearFaults();
     sparkMaxFeeder.setInverted(false);
-    sparkMaxFeeder.setSmartCurrentLimit(40, 20, 10);
+    //sparkMaxFeeder.setSmartCurrentLimit(20, 95, 10);
     sparkMaxFeeder.enableVoltageCompensation(12);
-    sparkMaxFeeder.setIdleMode(IdleMode.kBrake);
+    sparkMaxFeeder.setIdleMode(IdleMode.kCoast);
     sparkMaxFeeder.setClosedLoopRampRate(1.0);
-    sparkMaxFeeder.setSecondaryCurrentLimit(95, 250);
+    //sparkMaxFeeder.setSecondaryCurrentLimit(95, 250);
 
-    wheelsOn = false; 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-   
   }
 
   public void on(){
     sparkMaxFeeder.set(0.7);
-    wheelsOn = true;
   }
 
   public void reverse(){
@@ -47,15 +44,5 @@ public class Feeder extends SubsystemBase {
 
   public void off(){
     sparkMaxFeeder.set(0.0);
-    wheelsOn = false;
-  }
-
-  public void returnToPrevState(){
-    if(wheelsOn){
-      this.on();
-    }
-    else{
-      this.off();
-    }
   }
 }
