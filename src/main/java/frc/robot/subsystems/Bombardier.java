@@ -68,6 +68,7 @@ public class Bombardier extends SubsystemBase {
       //lock turret straight forward
       m_Turret.targetingDisabled(true);
       // set shooter head to 1/2 throttle
+      m_Shooter.setFailSafe(true);
       m_Shooter.failSafeShoot();
       //turn on indexer
       m_Indexer.shoot();
@@ -77,6 +78,7 @@ public class Bombardier extends SubsystemBase {
       // and shooter head rpm adjustment
       m_target = true;
       m_Turret.targetingEnabled(0);
+      m_Shooter.setFailSafe(false);
     }
   }
 
