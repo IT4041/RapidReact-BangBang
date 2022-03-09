@@ -21,11 +21,11 @@ public class Feeder extends SubsystemBase {
     sparkMaxFeeder.restoreFactoryDefaults();
     sparkMaxFeeder.clearFaults();
     sparkMaxFeeder.setInverted(false);
-    //sparkMaxFeeder.setSmartCurrentLimit(20, 95, 10);
+    sparkMaxFeeder.setSmartCurrentLimit(20, 95, 10);
     sparkMaxFeeder.enableVoltageCompensation(12);
     sparkMaxFeeder.setIdleMode(IdleMode.kCoast);
     sparkMaxFeeder.setClosedLoopRampRate(1.0);
-    //sparkMaxFeeder.setSecondaryCurrentLimit(95, 250);
+    sparkMaxFeeder.setSecondaryCurrentLimit(95, 250);
 
   }
 

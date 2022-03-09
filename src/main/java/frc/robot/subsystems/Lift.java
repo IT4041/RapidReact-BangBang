@@ -59,7 +59,7 @@ public class Lift extends SubsystemBase {
     liftSparkMax.clearFaults();
     liftSparkMax.enableVoltageCompensation(12);
     liftSparkMax.setIdleMode(IdleMode.kBrake);
-    liftSparkMax.setClosedLoopRampRate(1.0);
+    liftSparkMax.setClosedLoopRampRate(.25);
     liftSparkMax.setSecondaryCurrentLimit(95, 250);
 
     encoder.setPosition(Constants.LiftConstants.Home);

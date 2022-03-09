@@ -30,7 +30,7 @@ public class RobotContainer {
   public final XboxController driver = new XboxController(Constants.OIConstants.xboxControllerDriver);
   private final XboxController assist = new XboxController(Constants.OIConstants.xboxControllerAssist);
 
-  //private final ColorSensor colorSensor = new ColorSensor();
+  private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
   private final LimeLight limeLight = new LimeLight();
   private final NavX navX = new NavX();
@@ -44,7 +44,7 @@ public class RobotContainer {
   private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
   private final BangBangShooter bbshooter = new BangBangShooter();
-  private final MasterContoller bombardier = new MasterContoller(indexer, turret, bbshooter, limeLight, intakeWheels, feeder);
+  private final MasterContoller bombardier = new MasterContoller(indexer, turret, bbshooter, limeLight, intakeWheels, feeder, colorSensor);
 
   private SendableChooser<Command> m_chooser;
   private Trajectory[] m_trajectories;
@@ -111,13 +111,18 @@ public class RobotContainer {
     triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
     buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
-    buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
-    //buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::down,lift)));
+    buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::up,lift)));
+    //buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
+    
+    // buttonX_dr.whenPressed(new InstantCommand(arms::forwardPosition,arms));
+    // buttonB_dr.whenPressed(new InstantCommand(arms::backPosition,arms));
 
-    buttonX_dr.whenPressed(new InstantCommand(arms::forward,arms));
-    buttonB_dr.whenPressed(new InstantCommand(arms::back,arms));
+    buttonB_dr.whenPressed(new InstantCommand(arms::forward,arms));
+    buttonB_dr.whenReleased(new InstantCommand(arms::stop,arms));
+    buttonX_dr.whenPressed(new InstantCommand(arms::back,arms));
+    buttonX_dr.whenReleased(new InstantCommand(arms::stop,arms));
 
-    buttonBumperLeft_dr.whenPressed(new InstantCommand(arms::home, arms));
+    buttonBumperLeft_dr.whenPressed(new InstantCommand(arms::homePosition, arms));
 
     // in an emergency allow user to take over control
     buttonSelect_dr.whenPressed(new InstantCommand(bombardier::togglFailSafe,bombardier));

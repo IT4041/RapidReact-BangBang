@@ -80,6 +80,7 @@ public class BangBangShooter extends SubsystemBase {
 
     SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
     SmartDashboard.putNumber("scaledVelo", scaledVelo);
+    SmartDashboard.putBoolean("isTele", isTele);
 
     //TODO: remove this test code prior to competition
     // double targetRPM = SmartDashboard.getNumber("Target RPM", RPM_Target);

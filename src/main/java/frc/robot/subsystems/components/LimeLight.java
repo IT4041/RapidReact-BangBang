@@ -40,6 +40,7 @@ public class LimeLight extends SubsystemBase {
   private double cameraAngle = 43; // degrees
   private double cameraHeight = 37; // inches(get correct value from build team)
   private double targetHeight = 103; // inches (center of targets; targets are 2" tall from 102" to 104")
+  private boolean ledOn = false;
 
   public LimeLight() {
     // make sure led is off when lime light is initialized
@@ -51,6 +52,7 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("limelight angle", cameraAngle);
     SmartDashboard.putNumber("limelight height", cameraHeight);
+    SmartDashboard.putBoolean("LED On", ledOn);
 
   }
 
@@ -88,15 +90,18 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putBoolean("HasValidTarget", hasValidTarget());
     SmartDashboard.putNumber("Distance to Target: ", this.getDistance());
-
+    SmartDashboard.putBoolean("LED On", ledOn);
+  
   }
 
   public void ledOn() {
     limelightNT.getEntry("ledMode").setNumber(3);
+    ledOn = true;
   }
 
   public void ledOff() {
     limelightNT.getEntry("ledMode").setNumber(1);
+    ledOn = false;
   }
 
   public boolean hasValidTarget() {

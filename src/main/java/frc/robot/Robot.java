@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.enableAutoIndexing();
     m_robotContainer.isTele();
-   
+                      
   }
 
   /**
@@ -125,7 +125,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-  }
+
+    m_robotContainer.isTele();
+    }
 
   @Override
   public void testInit() {

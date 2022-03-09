@@ -30,7 +30,7 @@ public class Arms extends SubsystemBase {
     encoder = sparkMaxArms.getEncoder();
     
     // PID coefficients
-    kP = 0.025;
+    kP = 0.0252;
     kI = 0;
     kD = 0.0001; 
     kIz = 0; 
@@ -46,8 +46,8 @@ public class Arms extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    sparkMaxArms.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmsConstants.Back);
-    sparkMaxArms.setSoftLimit(SoftLimitDirection.kReverse, Constants.ArmsConstants.Forward);
+    sparkMaxArms.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmsConstants.Forward);
+    sparkMaxArms.setSoftLimit(SoftLimitDirection.kReverse, Constants.ArmsConstants.Reverse);
 
     sparkMaxArms.enableSoftLimit(SoftLimitDirection.kForward, true);
     sparkMaxArms.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -69,29 +69,36 @@ public class Arms extends SubsystemBase {
     SmartDashboard.putNumber("Arm position", encoder.getPosition());
   }
 
-  public void home(){
+  public void homePosition(){
     this.setPosition(Constants.ArmsConstants.Home);
     SmartDashboard.putNumber("Arm target", Constants.ArmsConstants.Home);
   }
 
-  public void forward(){
+  public void forwardPosition(){
     this.setPosition(Constants.ArmsConstants.Forward);
     SmartDashboard.putNumber("Arm target", Constants.ArmsConstants.Forward);
   }
 
-  public void back(){
-    this.setPosition(Constants.ArmsConstants.Back);
-    SmartDashboard.putNumber("Arm target", Constants.ArmsConstants.Back);
+  public void backPosition(){
+    this.setPosition(Constants.ArmsConstants.Reverse);
+    SmartDashboard.putNumber("Arm target", Constants.ArmsConstants.Reverse);
   }
 
   private void setPosition(double position) {
-
     SmartDashboard.putNumber("Arm target", position);
     pidController.setReference(position, ControlType.kPosition);
   }
 
   public void stop() {
     sparkMaxArms.set(0.0);
+  }
+
+  public void forward() {
+    sparkMaxArms.set(1);
+  }
+
+  public void back() {
+    sparkMaxArms.set(-1);
   }
 
 }

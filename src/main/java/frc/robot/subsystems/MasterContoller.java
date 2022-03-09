@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.components.*;
@@ -20,6 +21,7 @@ public class MasterContoller extends SubsystemBase {
   private final LimeLight m_LimeLight;
   private final IntakeWheels m_IntakeWheels;
   private final Feeder m_Feeder;
+  private final ColorSensor m_ColorSensor;
 
   private boolean m_failSafe = false;
   private boolean reversed = false;
@@ -27,13 +29,14 @@ public class MasterContoller extends SubsystemBase {
   private boolean m_target = false;
 
   public MasterContoller(Indexer in_Indexer, Turret in_Turret, BangBangShooter in_Shooter, LimeLight in_LimeLight,
-    IntakeWheels in_IntakeWheels, Feeder in_feeder) {
+    IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor) {
     m_Indexer = in_Indexer;
     m_Turret = in_Turret;
     m_Shooter = in_Shooter;
     m_LimeLight = in_LimeLight;
     m_IntakeWheels = in_IntakeWheels;
     m_Feeder = in_feeder;
+    m_ColorSensor = in_ColorSensor;
 
     SmartDashboard.putBoolean("FailSafe", m_failSafe);
   }
@@ -43,7 +46,22 @@ public class MasterContoller extends SubsystemBase {
 
   // This method will be called once per scheduler run
     if (m_target) {
-      this.doTargeting();
+      if(m_ColorSensor.BallIsWrongColor()){
+        m_Turret.turn30degreesPositive();
+        m_Shooter.disable();
+        m_Shooter.setFailSafe(true);
+        m_Shooter.setRPM(.4);
+        Timer.delay(.5);
+        m_Indexer.shoot();
+        Timer.delay(.5);
+        m_Indexer.off();
+        m_Shooter.setFailSafe(false);
+        m_Shooter.enable();
+        m_Turret.turn30degreesNegative();
+      }else{
+        this.doTargeting();
+      }
+      
     } else {
       this.stopTargeting();
     }

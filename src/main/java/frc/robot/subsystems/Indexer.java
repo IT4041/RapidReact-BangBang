@@ -52,10 +52,10 @@ public class Indexer extends SubsystemBase {
         
         if (m_RangeSensors.IntakeTriggered() || m_RangeSensors.bottomTriggered()){// we have bottom ball and no top
           m_indexerSparkMax.set(0.8);// index
-          on = true;
+          this.on = true;
         } else {
           m_indexerSparkMax.set(0.0);// don't index we have no balls
-          on = false;
+          this.on = false;
         }
         this.m_bumped = false;
       } 
@@ -67,7 +67,7 @@ public class Indexer extends SubsystemBase {
         this.m_bumped = true;
       }
     }
-    on=false;
+    this.on=false;
   }
 
   public void shoot() {

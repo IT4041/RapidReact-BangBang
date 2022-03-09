@@ -43,7 +43,7 @@ public class Turret extends SubsystemBase {
 
   private double clicksPerDegree = -1.75;//-1.6666667;
   private double m_xOffset = 0.0; // x offset reported by limelight
-  private final int maxOffset = 56; // Maximum x offset allow
+  private final int maxOffset = 60; // Maximum x offset allow
   private final int tolerance = 2; // clicks off target
 
   public Turret() {
@@ -60,11 +60,11 @@ public class Turret extends SubsystemBase {
 
     pidController.setFeedbackDevice(m_encoder);
 
-    pidController.setP(0.031 ,0);
+    pidController.setP(0.025 ,0);
     pidController.setI(0.0, 0);
-    pidController.setD(0.05, 0);
+    pidController.setD(0.04, 0);
     pidController.setIZone(0.0, 0);
-    pidController.setFF(0.001, 0);
+    pidController.setFF(0.0001, 0);
     pidController.setOutputRange(-1, 1, 0);
 
     m_turretSparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
