@@ -129,9 +129,15 @@ public class BangBangShooter extends SubsystemBase {
     double bbControllerValue;
 
     //Tommy's formula: y= -4808.15*.99^x+5800
-    //Tommy formula #2: y= -3558.53 *.975^x + 3750
+    //Tommy's formula #2: y= -3558.53 *.975^x + 3750
+    //Tommy's formula #3: y = -20.8333 * 1.03105^x + 3160-- not correct
+    //Tommy's formula #4: y= 21.8274 * 1.03076 ^x + 3150
+
     //double temp = (-4808.15 * Math.pow(.99,distance)) + 5800;
-    double temp = (-3558.53 * Math.pow(.975,distance)) + 3775;
+    //double temp = (-3558.53 * Math.pow(.975,distance)) + 3775;
+    //double temp = (-20.8333 * Math.pow(1.03105,distance)) + 3160;
+    double temp = (21.8274 * Math.pow(1.03076,distance)) + 3150;
+
     bbControllerValue = temp * RPM_multiplication_factor;
     
     SmartDashboard.putNumber("Calculated RPMS", bbControllerValue);

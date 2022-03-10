@@ -53,7 +53,7 @@ public class MasterContoller extends SubsystemBase {
         m_Shooter.setRPM(.4);
         Timer.delay(.5);
         m_Indexer.shoot();
-        Timer.delay(.5);
+        Timer.delay(2);
         m_Indexer.off();
         m_Shooter.setFailSafe(false);
         m_Shooter.enable();

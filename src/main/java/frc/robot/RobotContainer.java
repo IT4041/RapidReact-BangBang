@@ -94,36 +94,19 @@ public class RobotContainer {
 
     JoystickButton buttonA_dr = new JoystickButton(driver, Constants.OIConstants.buttonA);
     JoystickButton buttonY_dr = new JoystickButton(driver, Constants.OIConstants.buttonY);
-
     JoystickButton buttonX_dr = new JoystickButton(driver, Constants.OIConstants.buttonX);
     JoystickButton buttonB_dr = new JoystickButton(driver, Constants.OIConstants.buttonB);
-
     JoystickButton buttonBumperLeft_dr = new JoystickButton(driver, Constants.OIConstants.buttonBumperLeft);
-
     JoystickButton buttonSelect_dr = new JoystickButton(driver, Constants.OIConstants.buttonSelect);
-
-    // AxisJoystickButton triggerRight = new AxisJoystickButton(driver, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
-    // triggerRight.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
-    // triggerRight.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
-
-    AxisJoystickButton triggerRight_as = new AxisJoystickButton(assist, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
-    triggerRight_as.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
-    triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
     buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
     buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::up,lift)));
-    //buttonY_dr.whenPressed(new InstantCommand(lift::up,lift));
-    
-    // buttonX_dr.whenPressed(new InstantCommand(arms::forwardPosition,arms));
-    // buttonB_dr.whenPressed(new InstantCommand(arms::backPosition,arms));
-
     buttonB_dr.whenPressed(new InstantCommand(arms::forward,arms));
     buttonB_dr.whenReleased(new InstantCommand(arms::stop,arms));
     buttonX_dr.whenPressed(new InstantCommand(arms::back,arms));
     buttonX_dr.whenReleased(new InstantCommand(arms::stop,arms));
 
     buttonBumperLeft_dr.whenPressed(new InstantCommand(arms::homePosition, arms));
-
     // in an emergency allow user to take over control
     buttonSelect_dr.whenPressed(new InstantCommand(bombardier::togglFailSafe,bombardier));
 
@@ -131,8 +114,11 @@ public class RobotContainer {
     JoystickButton buttonY_as = new JoystickButton(assist, Constants.OIConstants.buttonY);
     JoystickButton buttonX_as = new JoystickButton(assist, Constants.OIConstants.buttonX);
     JoystickButton buttonB_as = new JoystickButton(assist, Constants.OIConstants.buttonB);
-
     JoystickButton buttonBumperRight_as = new JoystickButton(assist, Constants.OIConstants.buttonBumperRight);
+    AxisJoystickButton triggerRight_as = new AxisJoystickButton(assist, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
+
+    triggerRight_as.whenPressed(new InstantCommand(bombardier::targetNoParams,bombardier));
+    triggerRight_as.whenReleased(new InstantCommand(bombardier::stopTargetNoParams,bombardier));
 
     buttonX_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOn,bombardier));
     buttonB_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOff,bombardier));

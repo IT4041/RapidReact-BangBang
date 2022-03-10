@@ -67,8 +67,10 @@ public class IntakeElbow extends SubsystemBase {
     
     if(limit.isTriggered()){
       encoder.setPosition(Constants.IntakeConstants.Down);
+      System.out.println("intake is down");
     }else{
       encoder.setPosition(Constants.IntakeConstants.Home);
+      System.out.println("intake is up");
     }
     
     SmartDashboard.putNumber("elbow position", encoder.getPosition());
