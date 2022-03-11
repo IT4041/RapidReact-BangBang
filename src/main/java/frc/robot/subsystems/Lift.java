@@ -25,6 +25,7 @@ public class Lift extends SubsystemBase {
   private final SparkMaxPIDController pidController;
   private final RelativeEncoder encoder;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  private boolean firstLift = true;
 
   public Lift() {
     
@@ -93,6 +94,8 @@ public class Lift extends SubsystemBase {
 
   public void up() {
     liftSparkMax.set(-1);
+    firstLift = false;
+
   }
 
 }

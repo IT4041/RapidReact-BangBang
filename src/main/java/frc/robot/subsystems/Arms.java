@@ -93,11 +93,11 @@ public class Arms extends SubsystemBase {
     sparkMaxArms.set(0.0);
   }
 
-  public void forward() {
+  public void back() {
     sparkMaxArms.set(1);
   }
 
-  public void back() {
+  public void forward() {
     sparkMaxArms.set(-1);
   }
 
