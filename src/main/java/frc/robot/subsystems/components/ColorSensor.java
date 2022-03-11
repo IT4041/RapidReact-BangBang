@@ -8,7 +8,6 @@
 package frc.robot.subsystems.components;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -50,7 +49,6 @@ public class ColorSensor extends SubsystemBase {
 
     SmartDashboard.putBoolean("IsRed",  this.isRed);
     SmartDashboard.putBoolean("wrongColor",  wrongColor);
-
   }
 
   @Override

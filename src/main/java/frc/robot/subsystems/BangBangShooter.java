@@ -22,9 +22,7 @@ public class BangBangShooter extends SubsystemBase {
   private final CANSparkMax sparkMax2;
   private final RelativeEncoder encoder;
 
-  private int accumulator = 0;
   private double RPM_Target = 0;
-  private double rpmTolerance = 50;
   private double RPM_multiplication_factor = 0.001;
   private double scaledVelo = 0;
 
@@ -58,7 +56,6 @@ public class BangBangShooter extends SubsystemBase {
     sparkMax2.enableVoltageCompensation(12);
 
     SmartDashboard.putNumber("Calculated RPMS", 0);
-    SmartDashboard.putBoolean("Ready to Shoot", false);
     SmartDashboard.putNumber("Actual RPMS", 0);
     SmartDashboard.putNumber("RPM diff", 0);
     SmartDashboard.putNumber("Target RPM", RPM_Target);
@@ -68,9 +65,6 @@ public class BangBangShooter extends SubsystemBase {
     SmartDashboard.putNumber("kstatic", kstatic);
     SmartDashboard.putNumber("RPM_multiplication_factor", RPM_multiplication_factor);
     SmartDashboard.putNumber("scaledVelo", scaledVelo);
-    SmartDashboard.putNumber("rpmTolerance", rpmTolerance);
-    SmartDashboard.putNumber("accumulator", 0);
-    SmartDashboard.putBoolean("atSpeed", false);
     SmartDashboard.putBoolean("isTele", isTele);
 
   }
@@ -88,35 +82,25 @@ public class BangBangShooter extends SubsystemBase {
     //   RPM_Target = targetRPM;
     // }
 
-    // double newRPM_multiplication_factor = SmartDashboard.getNumber("RPM_multiplication_factor", RPM_multiplication_factor);
-    // if (newRPM_multiplication_factor != RPM_multiplication_factor) {
-    //   RPM_multiplication_factor = newRPM_multiplication_factor;
-    // }
-
-    // double newrpmTolerance = SmartDashboard.getNumber("rpmTolerance", rpmTolerance);
-    // if (newrpmTolerance != rpmTolerance) {
-    //   rpmTolerance = newrpmTolerance;
-    // }
-
-    SmartDashboard.putNumber("Target RPM", RPM_Target);
     double BangBangOutPut = bangBangController.calculate(encoder.getVelocity(), RPM_Target) + 0.9 * feedforward.calculate(RPM_Target);
     double FeedFowardOutput = feedforward.calculate(RPM_Target);
+
+    SmartDashboard.putNumber("Target RPM", RPM_Target);
     SmartDashboard.putNumber("BangBangOutPut", BangBangOutPut);
     SmartDashboard.putNumber("FeedFowardOutput", FeedFowardOutput);
-
-    SmartDashboard.putBoolean("Shooter Enabled", enabled);
     SmartDashboard.putNumber("RPM diff", (RPM_Target * RPM_multiplication_factor) - encoder.getVelocity());
+    SmartDashboard.putBoolean("Shooter Enabled", enabled);
 
     //if(false){
     if(isTele){
 
       if(enabled){
         sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));  
-        this.readyToShoot();
       }else if(failSafe){
         sparkMax2.set(RPM_Target);
       }else{//disabled
         sparkMax2.set(0.0);
+        RPM_Target = 0.0;
       }
     }
     else{
@@ -133,37 +117,13 @@ public class BangBangShooter extends SubsystemBase {
     //Tommy's formula #3: y = -20.8333 * 1.03105^x + 3160-- not correct
     //Tommy's formula #4: y= 21.8274 * 1.03076 ^x + 3150
 
-    //double temp = (-4808.15 * Math.pow(.99,distance)) + 5800;
-    //double temp = (-3558.53 * Math.pow(.975,distance)) + 3775;
-    //double temp = (-20.8333 * Math.pow(1.03105,distance)) + 3160;
+    // formula #4
     double temp = (21.8274 * Math.pow(1.03076,distance)) + 3150;
 
     bbControllerValue = temp * RPM_multiplication_factor;
     
     SmartDashboard.putNumber("Calculated RPMS", bbControllerValue);
     return bbControllerValue;
-  }
-
-  public boolean readyToShoot() {
-
-    boolean atSpeed = false;
-    double measuredVelo = encoder.getVelocity();
-    this.scaledVelo = this.RPM_Target * 1000;
-    SmartDashboard.putNumber("scaledVelo", this.scaledVelo);
-    SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
-
-    if(Math.abs(measuredVelo) <= (Math.abs(scaledVelo) + Math.abs(rpmTolerance)) && Math.abs(measuredVelo) >= (Math.abs(scaledVelo) - Math.abs(rpmTolerance))){
-      atSpeed = true;
-      accumulator++;
-    }
-
-    SmartDashboard.putNumber("RPM diff", scaledVelo - measuredVelo);
-    SmartDashboard.putBoolean("Ready to Shoot", atSpeed && accumulator > 2);
-    SmartDashboard.putNumber("accumulator", accumulator);
-    SmartDashboard.putBoolean("atSpeed", atSpeed);
-    
-    //return bangBangController.atSetpoint();
-    return true;//atSpeed && accumulator > 2;
   }
 
   public void on(double distance) {

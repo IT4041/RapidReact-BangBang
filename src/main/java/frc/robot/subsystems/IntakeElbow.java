@@ -90,6 +90,10 @@ public class IntakeElbow extends SubsystemBase {
     this.setPosition(Constants.IntakeConstants.Down);
   }
 
+  public void middle() {
+    this.setPosition(Constants.IntakeConstants.Middle);
+  }
+
   private void setPosition(double position) {
     pidController.setReference(position, ControlType.kPosition);
   }

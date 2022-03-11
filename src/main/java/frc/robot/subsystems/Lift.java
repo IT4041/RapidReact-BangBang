@@ -71,11 +71,11 @@ public class Lift extends SubsystemBase {
     SmartDashboard.putNumber("Lift position", encoder.getPosition());
   }
 
-  public void up() {
+  public void upPosition() {
     this.setPosition(Constants.LiftConstants.Top);
   }
 
-  public void down() {
+  public void downPosition() {
     this.setPosition(Constants.LiftConstants.Home);
   }
 
@@ -85,6 +85,14 @@ public class Lift extends SubsystemBase {
 
   public void stop() {
     liftSparkMax.set(0.0);
+  }
+
+  public void down() {
+    liftSparkMax.set(1);
+  }
+
+  public void up() {
+    liftSparkMax.set(-1);
   }
 
 }

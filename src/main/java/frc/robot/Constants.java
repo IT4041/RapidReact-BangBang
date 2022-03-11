@@ -101,6 +101,7 @@ public class Constants {
         public static final int IntakeFeederSparkMax = 9;
         public static final int Down = -99;
         public static final int Home = 0;
+        public static final int Middle = -50;
     }
 
 	public static final class RangeSensorConstants {
@@ -115,7 +116,7 @@ public class Constants {
 
 	public static final class LiftConstants {
         public static final int LiftSparkMax = 32;
-        public static final int Top = -640;
+        public static final int Top = -698;
         public static final int Home = 0;
     }
 

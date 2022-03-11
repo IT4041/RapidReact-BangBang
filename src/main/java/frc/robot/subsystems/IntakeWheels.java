@@ -26,7 +26,7 @@ public class IntakeWheels extends SubsystemBase {
     sparkMaxWheels.restoreFactoryDefaults();
     sparkMaxWheels.clearFaults();
     sparkMaxWheels.setInverted(false);
-    sparkMaxWheels.setSmartCurrentLimit(40, 20, 10);
+    sparkMaxWheels.setSmartCurrentLimit(40, 95, 10);
     sparkMaxWheels.enableVoltageCompensation(12);
     sparkMaxWheels.setIdleMode(IdleMode.kBrake);
     sparkMaxWheels.setClosedLoopRampRate(1.0);
@@ -62,5 +62,4 @@ public class IntakeWheels extends SubsystemBase {
       this.off();
     }
   }
-
 }

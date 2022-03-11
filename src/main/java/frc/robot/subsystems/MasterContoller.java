@@ -43,6 +43,7 @@ public class MasterContoller extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("FailSafe", m_failSafe);
 
   // This method will be called once per scheduler run
     if (m_target) {
@@ -65,13 +66,11 @@ public class MasterContoller extends SubsystemBase {
     } else {
       this.stopTargeting();
     }
-    SmartDashboard.putBoolean("FailSafe", m_failSafe);
 
-    if(!m_Indexer.IsOn() && !intakeOn){
-      m_Feeder.off();
-    }else{
-      if(reversed){
-        m_Feeder.reverse();
+    //coordinate feeder with indexer and intake
+    if(!reversed){
+      if(!m_Indexer.IsOn() && !intakeOn){
+        m_Feeder.off();
       }else{
         m_Feeder.on();
       }
@@ -83,7 +82,7 @@ public class MasterContoller extends SubsystemBase {
     m_Shooter.setFailSafe(m_failSafe);
   }
 
-  public void targetNoParams() {
+  public void enabledTargetingAndShooting() {
 
     m_Indexer.setAutoIndexOff();
     if (m_failSafe) {
@@ -93,7 +92,9 @@ public class MasterContoller extends SubsystemBase {
       m_Shooter.setFailSafe(true);
       m_Shooter.failSafeShoot();
       //turn on indexer
+      Timer.delay(.25);
       m_Indexer.shoot();
+      m_Feeder.on();
     
     } else {
       // do turret targeting,
@@ -105,11 +106,12 @@ public class MasterContoller extends SubsystemBase {
     }
   }
 
-  public void stopTargetNoParams() {
+  public void disabledTargetingAndShooting() {
     m_target = false;
     m_Indexer.setAutoIndexOn();
     if (m_failSafe) {
       m_Shooter.setRPM(0);
+      m_Feeder.off();
     }
   }
   // ***********************************************************
@@ -121,15 +123,13 @@ public class MasterContoller extends SubsystemBase {
     if(m_Turret.onTarget() && m_LimeLight.hasValidTarget()){
       m_Shooter.enable();
       m_Shooter.on(m_LimeLight.getDistance());
-      if(m_Shooter.readyToShoot()){   
-        m_Indexer.shoot();
-      }
+      Timer.delay(.25);
+      m_Indexer.shoot();
     }
   }
 
   private void stopTargeting() {
     m_LimeLight.ledOff();
-
     boolean reset = DriverStation.isAutonomous()?false:true;
     m_Turret.targetingDisabled(reset);
     m_Shooter.disable();
@@ -147,6 +147,9 @@ public class MasterContoller extends SubsystemBase {
     reversed = false;
     m_Indexer.setAutoIndexOn();
     m_IntakeWheels.returnToPrevState();
+    if(!m_Indexer.IsOn() && !intakeOn){
+      m_Feeder.off();
+    }
   }
 
   public void intakeWheelsOn(){
