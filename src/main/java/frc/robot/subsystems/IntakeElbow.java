@@ -10,13 +10,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.components.MagneticLimitSwitch;
+import frc.robot.subsystems.components.MagneticLimitSwitches;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class IntakeElbow extends SubsystemBase {
@@ -25,15 +26,15 @@ public class IntakeElbow extends SubsystemBase {
   private SparkMaxPIDController pidController;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private RelativeEncoder encoder;
-  private MagneticLimitSwitch limit;
+  private MagneticLimitSwitches m_limit;
 
-  public IntakeElbow() {
+  public IntakeElbow(MagneticLimitSwitches in_MagSwitch) {
 
     sparkMax = new CANSparkMax(Constants.IntakeConstants.IntakeElbowSparkMax, MotorType.kBrushless);
     sparkMax.restoreFactoryDefaults();
     pidController = sparkMax.getPIDController();
     encoder = sparkMax.getEncoder();
-    limit = new MagneticLimitSwitch();
+    m_limit = in_MagSwitch;
 
     // PID coefficients
     kP = 0.013;
@@ -52,20 +53,20 @@ public class IntakeElbow extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // sparkMax.setSoftLimit(SoftLimitDirection.kForward, kForwardSoftLimit);
-    // sparkMax.setSoftLimit(SoftLimitDirection.kReverse, kReverseSoftLimit);
+    sparkMax.setSoftLimit(SoftLimitDirection.kForward, Constants.IntakeConstants.Home);
+    sparkMax.setSoftLimit(SoftLimitDirection.kReverse, Constants.IntakeConstants.Down);
 
-    // sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
-    // sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    sparkMax.enableSoftLimit(SoftLimitDirection.kForward, true);
+    sparkMax.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    sparkMax.setSmartCurrentLimit(15, 50, 10);
+    sparkMax.setSmartCurrentLimit(25, 90, 10);
     sparkMax.clearFaults();
     sparkMax.enableVoltageCompensation(12);
     sparkMax.setIdleMode(IdleMode.kBrake);
     sparkMax.setClosedLoopRampRate(1.0);
     sparkMax.setSecondaryCurrentLimit(95, 250);
     
-    if(limit.isTriggered()){
+    if(m_limit.isTriggeredElbow()){
       encoder.setPosition(Constants.IntakeConstants.Down);
       System.out.println("intake is down");
     }else{

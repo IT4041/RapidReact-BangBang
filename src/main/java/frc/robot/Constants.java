@@ -96,10 +96,10 @@ public class Constants {
     }
 
     public static final class IntakeConstants {
-        public static final int IntakeElbowSparkMax = 10;
+        public static final int IntakeElbowSparkMax = 11;
         public static final int IntakeWheelsSparkMax = 6;
         public static final int IntakeFeederSparkMax = 9;
-        public static final int Down = -99;
+        public static final int Down = -110;
         public static final int Home = 0;
         public static final int Middle = -50;
     }
@@ -116,7 +116,7 @@ public class Constants {
 
 	public static final class LiftConstants {
         public static final int LiftSparkMax = 32;
-        public static final int Top = -725;
+        public static final int Top = -240;
         public static final int Home = 0;
     }
 
@@ -130,6 +130,7 @@ public class Constants {
 
     public static final class LimitSwitchConstants {
         public static final int ElbowLimitSwitch = 0;
+        public static final int ArmLimitSwitch = 1;
     }
     
 

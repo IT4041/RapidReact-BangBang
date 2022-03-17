@@ -16,7 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.auto.groups.SingleBallAuto;
-import frc.robot.commands.auto.groups.ThreeBallAuto;
+import frc.robot.commands.auto.groups.SingleBallAutoWithTargeting;
+//import frc.robot.commands.auto.groups.ThreeBallAuto;
 import frc.robot.commands.auto.groups.TwoBallAuto;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
@@ -34,23 +35,25 @@ public class RobotContainer {
   private final RangeSensors rangeSensors = new RangeSensors();
   private final LimeLight limeLight = new LimeLight();
   private final NavX navX = new NavX();
+  private final MagneticLimitSwitches magSwitches = new MagneticLimitSwitches();
 
   public final DriveTrain driveTrain = new DriveTrain(navX);
   private final Feeder feeder = new Feeder();
   private final Lift lift = new Lift();
-  private final Arms arms = new Arms();
+  private final Arms arms = new Arms(magSwitches);
   private final Indexer indexer = new Indexer(rangeSensors);
-  private final IntakeElbow intakeElbow = new IntakeElbow();
+  private final IntakeElbow intakeElbow = new IntakeElbow(magSwitches);
   private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
   private final BangBangShooter bbshooter = new BangBangShooter();
-  private final MasterContoller bombardier = new MasterContoller(indexer, turret, bbshooter, limeLight, intakeWheels, feeder, colorSensor);
+  private final MasterContoller masterController = new MasterContoller(indexer, turret, bbshooter, limeLight, intakeWheels, feeder, colorSensor, lift, arms, intakeElbow);
 
   private SendableChooser<Command> m_chooser;
   private Trajectory[] m_trajectories;
-  private SingleBallAuto OneB1, OneB2, OneB3;
-  private TwoBallAuto TwoB1, TwoB2;
-  private ThreeBallAuto ThreeB1;
+  private SingleBallAuto OneB1;
+  private TwoBallAuto TwoB1;
+  private SingleBallAuto StraightBack;
+  private SingleBallAutoWithTargeting OneB1WithTargeting;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -62,20 +65,16 @@ public class RobotContainer {
     configureButtonBindings();
 
     this.OneB1 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[0]);
-    this.OneB2 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[1]);
-    this.OneB3 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[2]);
-    this.TwoB1 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[3]);
-    this.TwoB2 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[4]);
-    this.ThreeB1 = new ThreeBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[5],m_trajectories[6]);
+    this.OneB1WithTargeting = new SingleBallAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
+    this.TwoB1 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[1]);
+    this.StraightBack = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[2]);
 
     this.m_chooser = new SendableChooser<Command>();
 
-    this.m_chooser.setDefaultOption("One Ball 1", this.OneB1);
-    this.m_chooser.addOption("One Ball 2", this.OneB2);
-    this.m_chooser.addOption("One Ball 3", this.OneB3);
-    this.m_chooser.addOption("Two Ball 1", this.TwoB1);
-    this.m_chooser.addOption("Two Ball 2", this.TwoB2);
-    this.m_chooser.addOption("Three Ball", this.ThreeB1);
+    this.m_chooser.setDefaultOption("One Ball", this.OneB1);
+    this.m_chooser.addOption("Two Ball", this.TwoB1);
+    this.m_chooser.addOption("Straight Back", this.StraightBack);
+    this.m_chooser.addOption("One Ball with Targeting", this.OneB1WithTargeting);
 
     // Put the chooser on the dashboard
     SmartDashboard.putData(this.m_chooser);
@@ -99,20 +98,20 @@ public class RobotContainer {
     JoystickButton buttonBumperLeft_dr = new JoystickButton(driver, Constants.OIConstants.buttonBumperLeft);
     JoystickButton buttonSelect_dr = new JoystickButton(driver, Constants.OIConstants.buttonSelect);
 
-    buttonA_dr.whenPressed(new InstantCommand(lift::down,lift));
-    buttonA_dr.whenReleased(new InstantCommand(lift::stop,lift));
-    buttonY_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(lift::up,lift)));
-    buttonY_dr.whenReleased(new InstantCommand(lift::stop,lift));
+    buttonA_dr.whenPressed(new InstantCommand(masterController::liftDown,masterController));
+    buttonA_dr.whenReleased(new InstantCommand(masterController::liftStop,masterController));
+    buttonY_dr.whenPressed(new InstantCommand(masterController::liftUp,masterController));
+    buttonY_dr.whenReleased(new InstantCommand(masterController::liftStop,masterController));
 
-    buttonX_dr.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(arms::forward,arms)));
-    buttonX_dr.whenReleased(new InstantCommand(arms::stop,arms));
-    buttonB_dr.whenPressed(new InstantCommand(arms::back,arms));
-    buttonB_dr.whenReleased(new InstantCommand(arms::stop,arms));
+    buttonX_dr.whenPressed(new InstantCommand(masterController::armsForward,masterController));
+    buttonX_dr.whenReleased(new InstantCommand(masterController::armsStop,masterController));
+    buttonB_dr.whenPressed(new InstantCommand(masterController::armsBack,masterController));
+    buttonB_dr.whenReleased(new InstantCommand(masterController::armsStop,masterController));
 
     buttonBumperLeft_dr.whenPressed(new InstantCommand(arms::homePosition, arms));
+    
     // in an emergency allow user to take over control
-
-    buttonSelect_dr.whenPressed(new InstantCommand(bombardier::togglFailSafe,bombardier));
+    buttonSelect_dr.whenPressed(new InstantCommand(masterController::togglFailSafe,masterController));
 
     JoystickButton buttonA_as = new JoystickButton(assist, Constants.OIConstants.buttonA);
     JoystickButton buttonY_as = new JoystickButton(assist, Constants.OIConstants.buttonY);
@@ -121,17 +120,17 @@ public class RobotContainer {
     JoystickButton buttonBumperRight_as = new JoystickButton(assist, Constants.OIConstants.buttonBumperRight);
     AxisJoystickButton triggerRight_as = new AxisJoystickButton(assist, Constants.OIConstants.rightTrigger, 0.5, ThresholdType.GREATER_THAN);
 
-    triggerRight_as.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow).andThen(new InstantCommand(bombardier::enabledTargetingAndShooting,bombardier)));
-    triggerRight_as.whenReleased(new InstantCommand(bombardier::disabledTargetingAndShooting,bombardier));
+    triggerRight_as.whenPressed(new InstantCommand(masterController::enabledTargetingAndShooting,masterController));
+    triggerRight_as.whenReleased(new InstantCommand(masterController::disabledTargetingAndShooting,masterController));
 
-    buttonX_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOn,bombardier));
-    buttonB_as.whenPressed(new InstantCommand(bombardier::intakeWheelsOff,bombardier));
+    buttonX_as.whenPressed(new InstantCommand(masterController::intakeWheelsOn,masterController));
+    buttonB_as.whenPressed(new InstantCommand(masterController::intakeWheelsOff,masterController));
 
-    buttonA_as.whenPressed(new InstantCommand(intakeElbow::down,intakeElbow));
-    buttonY_as.whenPressed(new InstantCommand(intakeElbow::up,intakeElbow));
+    buttonA_as.whenPressed(new InstantCommand(masterController::elbowDown,masterController));
+    buttonY_as.whenPressed(new InstantCommand(masterController::elbowUp,masterController));
 
-    buttonBumperRight_as.whenPressed(new InstantCommand(bombardier::reverseAll,bombardier));
-    buttonBumperRight_as.whenReleased(new InstantCommand(bombardier::returnToPrevState,bombardier));
+    buttonBumperRight_as.whenPressed(new InstantCommand(masterController::reverseAll,masterController));
+    buttonBumperRight_as.whenReleased(new InstantCommand(masterController::returnToPrevState,masterController));
 
   }
 

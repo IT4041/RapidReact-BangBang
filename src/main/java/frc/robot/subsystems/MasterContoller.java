@@ -22,6 +22,9 @@ public class MasterContoller extends SubsystemBase {
   private final IntakeWheels m_IntakeWheels;
   private final Feeder m_Feeder;
   private final ColorSensor m_ColorSensor;
+  private final Lift m_lift;
+  private final Arms m_arms;
+  private final IntakeElbow m_intakeElbow;
 
   private boolean m_failSafe = false;
   private boolean reversed = false;
@@ -29,7 +32,7 @@ public class MasterContoller extends SubsystemBase {
   private boolean m_target = false;
 
   public MasterContoller(Indexer in_Indexer, Turret in_Turret, BangBangShooter in_Shooter, LimeLight in_LimeLight,
-    IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor) {
+      IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor, Lift in_lift, Arms in_arms, IntakeElbow in_intakeElbow) {
     m_Indexer = in_Indexer;
     m_Turret = in_Turret;
     m_Shooter = in_Shooter;
@@ -37,6 +40,9 @@ public class MasterContoller extends SubsystemBase {
     m_IntakeWheels = in_IntakeWheels;
     m_Feeder = in_feeder;
     m_ColorSensor = in_ColorSensor;
+    m_lift = in_lift;
+    m_arms = in_arms;
+    m_intakeElbow = in_intakeElbow;
 
     SmartDashboard.putBoolean("FailSafe", m_failSafe);
   }
@@ -45,9 +51,9 @@ public class MasterContoller extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putBoolean("FailSafe", m_failSafe);
 
-  // This method will be called once per scheduler run
+    // This method will be called once per scheduler run
     if (m_target) {
-      if(m_ColorSensor.BallIsWrongColor()){
+      if (m_ColorSensor.BallIsWrongColor()) {
         m_Turret.turn30degreesPositive();
         m_Shooter.disable();
         m_Shooter.setFailSafe(true);
@@ -59,23 +65,24 @@ public class MasterContoller extends SubsystemBase {
         m_Shooter.setFailSafe(false);
         m_Shooter.enable();
         m_Turret.turn30degreesNegative();
-      }else{
+      } else {
         this.doTargeting();
       }
-      
+
     } else {
       this.stopTargeting();
     }
 
-    //coordinate feeder with indexer and intake
-    if(!reversed){
-      if(!m_Indexer.IsOn() && !intakeOn){
+    // coordinate feeder with indexer and intake
+    if (!reversed) {
+      if (!m_Indexer.IsOn() && !intakeOn) {
         m_Feeder.off();
-      }else{
+      } else {
         m_Feeder.on();
       }
     }
   }
+
   // parameterless functions for inlining ********************
   public void togglFailSafe() {
     m_failSafe = !m_failSafe;
@@ -84,18 +91,20 @@ public class MasterContoller extends SubsystemBase {
 
   public void enabledTargetingAndShooting() {
 
+    m_intakeElbow.down();
     m_Indexer.setAutoIndexOff();
     if (m_failSafe) {
-      //lock turret straight forward
+      m_target = false;
+      // lock turret straight forward
       m_Turret.targetingDisabled(true);
       // set shooter head to 1/2 throttle
       m_Shooter.setFailSafe(true);
       m_Shooter.failSafeShoot();
-      //turn on indexer
+      // turn on indexer
       Timer.delay(.25);
       m_Indexer.shoot();
       m_Feeder.on();
-    
+
     } else {
       // do turret targeting,
       // distance calculation,
@@ -108,6 +117,7 @@ public class MasterContoller extends SubsystemBase {
 
   public void disabledTargetingAndShooting() {
     m_target = false;
+    m_Indexer.off();
     m_Indexer.setAutoIndexOn();
     if (m_failSafe) {
       m_Shooter.setRPM(0);
@@ -120,7 +130,7 @@ public class MasterContoller extends SubsystemBase {
   private void doTargeting() {
     m_LimeLight.ledOn();
     m_Turret.targetingEnabled(m_LimeLight.getXOffset());
-    if(m_Turret.onTarget() && m_LimeLight.hasValidTarget()){
+    if (m_Turret.onTarget() && m_LimeLight.hasValidTarget()) {
       m_Shooter.enable();
       m_Shooter.on(m_LimeLight.getDistance());
       Timer.delay(.25);
@@ -130,12 +140,13 @@ public class MasterContoller extends SubsystemBase {
 
   private void stopTargeting() {
     m_LimeLight.ledOff();
-    boolean reset = DriverStation.isAutonomous()?false:true;
+    boolean reset = DriverStation.isAutonomous() ? false : true;
     m_Turret.targetingDisabled(reset);
     m_Shooter.disable();
   }
+
   // *************************************************
-  public void reverseAll(){
+  public void reverseAll() {
     reversed = true;
     m_Indexer.setAutoIndexOff();
     m_Feeder.reverse();
@@ -143,23 +154,60 @@ public class MasterContoller extends SubsystemBase {
     m_Indexer.reverse();
   }
 
-  public void returnToPrevState(){
+  public void returnToPrevState() {
     reversed = false;
     m_Indexer.setAutoIndexOn();
     m_IntakeWheels.returnToPrevState();
-    if(!m_Indexer.IsOn() && !intakeOn){
+    if (!m_Indexer.IsOn() && !intakeOn) {
       m_Feeder.off();
     }
   }
 
-  public void intakeWheelsOn(){
+  public void intakeWheelsOn() {
     m_IntakeWheels.on();
     intakeOn = true;
   }
-  
-  public void intakeWheelsOff(){
+
+  public void intakeWheelsOff() {
     m_IntakeWheels.off();
     intakeOn = false;
+  }
+
+  public void liftUp(){
+    m_intakeElbow.down();
+    if(m_lift.isFirstLift()){
+      m_arms.back();
+    }
+    m_lift.up();
+  }
+
+  public void liftDown(){
+    m_lift.down();
+  }
+
+  public void liftStop(){
+    m_lift.stop();
+  }
+
+  public void armsForward(){
+    m_intakeElbow.down();
+    m_arms.forward();
+  }
+
+  public void armsBack(){
+    m_arms.back();
+  }
+
+  public void armsStop(){
+    m_arms.stop();
+  }
+
+  public void elbowDown(){
+    m_intakeElbow.down();
+  }
+
+  public void elbowUp(){
+    m_intakeElbow.up();
   }
 
 }

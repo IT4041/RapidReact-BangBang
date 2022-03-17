@@ -124,13 +124,17 @@ public class Turret extends SubsystemBase {
     
 
     if(Reset){
-      //reset x offset
-      m_xOffset = 0.0;
-
-      //recenter turret on back of robot
-      current = 0.0;
-      pidController.setReference(current, ControlType.kPosition);
+      this.reset();
     }
+  }
+
+  public void reset(){
+          //reset x offset
+          m_xOffset = 0.0;
+
+          //recenter turret on back of robot
+          current = 0.0;
+          pidController.setReference(current, ControlType.kPosition);
   }
 
   public void targetingDisabledNoParam(){
@@ -173,6 +177,10 @@ public class Turret extends SubsystemBase {
   public void turn10degreesPositive(){
     this.turnToDegree(10.0);
   }
+  public void turn20degreesPositive(){
+    this.turnToDegree(20.0);
+  }
+
   public void turn30degreesPositive(){
     this.turnToDegree(30.0);
   }
@@ -195,6 +203,10 @@ public class Turret extends SubsystemBase {
 
   public void turn10degreesNegative(){
     this.turnToDegree(-10.0);
+  }
+
+  public void turn20degreesNegative(){
+    this.turnToDegree(-20.0);
   }
 
   public void turn30degreesNegative(){

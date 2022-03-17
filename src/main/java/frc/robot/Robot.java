@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -33,15 +34,13 @@ public class Robot extends TimedRobot {
   public RobotContainer m_robotContainer;
 
   String basePath = "pathplanner/generatedJSON/";
-  String OneB1_dir = "SingleBall_Path1.wpilib.json";
-  String OneB2_dir = "SingleBall_Path2.wpilib.json";
-  String OneB3_dir = "SingleBall_Path3.wpilib.json";
+  String OneB1_dir = "OneBall1_Path.wpilib.json";
   String TwoB1_dir = "TwoBall1_Path.wpilib.json";
-  String TwoB2_dir = "TwoBall2_Path.wpilib.json";
-  String ThreeB1A_dir = "ThreeBall1A_Path.wpilib.json";
-  String ThreeB1B_dir = "ThreeBall1B_Path.wpilib.json";
+  String straightback_dir = "StraightBackPath.wpilib.json";
 
-  Trajectory Traj_OneB1, Traj_OneB2, Traj_OneB3 , Traj_TwoB1, Traj_TwoB2 ,Traj_ThreeB1A ,Traj_ThreeB1B;
+  Trajectory Traj_OneB1; 
+  Trajectory Traj_TwoB1; 
+  Trajectory traj_StraightBack;
 
   @Override
   public void robotInit() {
@@ -53,6 +52,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.disabledLEDS();
 
     CameraServer.startAutomaticCapture();
+    SmartDashboard.putString("Auto", "none");
 
   }
 
@@ -92,6 +92,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+    SmartDashboard.putString("Auto", m_autonomousCommand.getName());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -143,7 +145,7 @@ public class Robot extends TimedRobot {
 
   private Trajectory[] loadTrajectories(){
 
-    Trajectory[] trajectories = new Trajectory[7];
+    Trajectory[] trajectories = new Trajectory[3];
     
     try {
       Path Path_OneB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB1_dir );
@@ -151,35 +153,15 @@ public class Robot extends TimedRobot {
       System.out.println("One ball 1 open");
       trajectories[0] = Traj_OneB1;
 
-      Path Path_OneB2 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB2_dir );
-      Traj_OneB2 = TrajectoryUtil.fromPathweaverJson(Path_OneB2);
-      System.out.println("One ball 2 open");
-      trajectories[1] = Traj_OneB2;
-
-      Path Path_OneB3 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB3_dir );
-      Traj_OneB3 = TrajectoryUtil.fromPathweaverJson(Path_OneB3);
-      System.out.println("Two ball 3 open");
-      trajectories[2] = Traj_OneB3;
-
       Path Path_TwoB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoB1_dir );
       Traj_TwoB1 = TrajectoryUtil.fromPathweaverJson(Path_TwoB1);
       System.out.println("One ball 1 open");
-      trajectories[3] = Traj_TwoB1;
+      trajectories[1] = Traj_TwoB1;
 
-      Path Path_TwoB2 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoB2_dir );
-      Traj_TwoB2 = TrajectoryUtil.fromPathweaverJson(Path_TwoB2);
-      System.out.println("Two ball 2 open");
-      trajectories[4] = Traj_TwoB2;
-
-      Path Path_ThreeB1A = Filesystem.getDeployDirectory().toPath().resolve(basePath + ThreeB1A_dir );
-      Traj_ThreeB1A = TrajectoryUtil.fromPathweaverJson(Path_ThreeB1A);
-      System.out.println("Three ball 1A open");
-      trajectories[5] = Traj_ThreeB1A;
-
-      Path Path_ThreeB1B = Filesystem.getDeployDirectory().toPath().resolve(basePath + ThreeB1B_dir );
-      Traj_ThreeB1B = TrajectoryUtil.fromPathweaverJson(Path_ThreeB1B);
-      System.out.println("Three ball 1B open");
-      trajectories[6] = Traj_ThreeB1B;
+      Path Path_straightback = Filesystem.getDeployDirectory().toPath().resolve(basePath + straightback_dir );
+      traj_StraightBack = TrajectoryUtil.fromPathweaverJson(Path_straightback);
+      System.out.println("Straight Back open");
+      trajectories[2] = traj_StraightBack;
 
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory", ex.getStackTrace());

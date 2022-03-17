@@ -95,7 +95,10 @@ public class Lift extends SubsystemBase {
   public void up() {
     liftSparkMax.set(-1);
     firstLift = false;
+  }
 
+  public boolean isFirstLift(){
+    return firstLift;
   }
 
 }

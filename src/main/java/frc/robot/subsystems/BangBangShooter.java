@@ -151,11 +151,11 @@ public class BangBangShooter extends SubsystemBase {
   }
 
   public void setShotRpmFar(){
-    this.setRPM(0.58);
+    this.setRPM(0.60);
   }
 
   public void setShotRpmClose(){
-    this.setRPM(0.56);
+    this.setRPM(0.58);
   }
 
   public void setRPM(double rpm){
