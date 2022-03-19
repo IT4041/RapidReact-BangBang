@@ -101,4 +101,8 @@ public class Lift extends SubsystemBase {
     return firstLift;
   }
 
+  public void resetFirstLift(){
+    this.firstLift = true;
+  }
+
 }

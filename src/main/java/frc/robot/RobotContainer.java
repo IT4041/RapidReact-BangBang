@@ -154,4 +154,8 @@ public class RobotContainer {
   public void isTele() {
     bbshooter.setIsTele();
   }
+
+  public void resetFirstLift() {
+    masterController.resetFirstLift();
+  }
 }

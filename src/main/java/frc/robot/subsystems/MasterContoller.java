@@ -210,4 +210,7 @@ public class MasterContoller extends SubsystemBase {
     m_intakeElbow.up();
   }
 
+  public void resetFirstLift(){
+    m_lift.resetFirstLift();
+  }
 }
