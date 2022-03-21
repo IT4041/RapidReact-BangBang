@@ -24,7 +24,8 @@ public class Arms extends SubsystemBase {
   private final RelativeEncoder encoder;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private MagneticLimitSwitches m_limit;
-  private boolean atlimit = false;
+  private boolean atlimitBack = false;
+  private boolean atlimitForward = false;
   private boolean backwards = true;
 
   public Arms(MagneticLimitSwitches in_MagSwitch) {
@@ -43,7 +44,7 @@ public class Arms extends SubsystemBase {
     kMaxOutput = 1; 
     kMinOutput = -1;
 
-    atlimit = !m_limit.isTriggeredArm();
+    atlimitBack = !m_limit.isTriggeredArmBack();
 
     // set PID coefficients
     pidController.setP(kP);
@@ -75,8 +76,13 @@ public class Arms extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Arm position", encoder.getPosition());
 
-    atlimit = m_limit.isTriggeredArm();
-    if(atlimit && backwards){
+    atlimitBack = m_limit.isTriggeredArmBack();
+    if(atlimitBack && backwards){
+      this.stop();
+    }
+
+    atlimitForward = m_limit.isTriggeredArmForward();
+    if(atlimitForward && !backwards){
       this.stop();
     }
   }
@@ -99,8 +105,8 @@ public class Arms extends SubsystemBase {
   public void back() {
     backwards = true;
 
-    atlimit = m_limit.isTriggeredArm();
-    if(atlimit){
+    atlimitBack = m_limit.isTriggeredArmBack();
+    if(atlimitBack){
       this.stop();
     }else{
       sparkMaxArms.set(1);
@@ -108,8 +114,14 @@ public class Arms extends SubsystemBase {
   }
 
   public void forward() {
-    sparkMaxArms.set(-1);
     backwards = false;
+
+    atlimitForward = m_limit.isTriggeredArmForward();
+    if(atlimitForward){
+      this.stop();
+    }else{
+      sparkMaxArms.set(-1);
+    }
   }
 
 }

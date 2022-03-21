@@ -13,14 +13,18 @@ public class MagneticLimitSwitches extends SubsystemBase {
   /** Creates a new MagneticLimitSwitch. */
 
   private DigitalInput ElbowlimitSwitch = new DigitalInput(Constants.LimitSwitchConstants.ElbowLimitSwitch);
-  private DigitalInput ArmlimitSwitch = new DigitalInput(Constants.LimitSwitchConstants.ArmLimitSwitch);
+  private DigitalInput ArmlimitSwitchBack = new DigitalInput(Constants.LimitSwitchConstants.ArmLimitSwitchBack);
+  private DigitalInput ArmlimitSwitchForward = new DigitalInput(Constants.LimitSwitchConstants.ArmLimitSwitchForward);
 
   private boolean elbowTriggered = this.getElbowLimitSwitchState();
-  private boolean armTriggered = this.getArmLimitSwitchState();
+  private boolean armTriggeredBack = this.getArmBackLimitSwitchState();
+  private boolean armTriggeredForward = this.getArmBackLimitSwitchState();
+  
 
   public MagneticLimitSwitches() {
     SmartDashboard.putBoolean("Elbow Limit triggered", this.elbowTriggered);
-    SmartDashboard.putBoolean("Arm Limit triggered", this.armTriggered);
+    SmartDashboard.putBoolean("Arm Limit Back triggered", this.armTriggeredBack);
+    SmartDashboard.putBoolean("Arm Limit Forward triggered", this.armTriggeredForward);
   }
 
   @Override
@@ -29,8 +33,11 @@ public class MagneticLimitSwitches extends SubsystemBase {
     this.elbowTriggered = this.getElbowLimitSwitchState();
     SmartDashboard.putBoolean("Elbow Limit triggered", this.elbowTriggered);
 
-    this.armTriggered = this.getArmLimitSwitchState();
-    SmartDashboard.putBoolean("Arm Limit triggered", this.armTriggered);
+    this.armTriggeredBack = this.getArmBackLimitSwitchState();
+    SmartDashboard.putBoolean("Arm Limit triggered", this.armTriggeredBack);
+
+    this.armTriggeredForward = this.getArmForwardLimitSwitchState();
+    SmartDashboard.putBoolean("Arm Limit triggered", this.armTriggeredForward);
   }
 
   private boolean getElbowLimitSwitchState() {
@@ -41,12 +48,20 @@ public class MagneticLimitSwitches extends SubsystemBase {
     return elbowTriggered;
   }
 
-  private boolean getArmLimitSwitchState() {
-    return !ArmlimitSwitch.get();
+  private boolean getArmBackLimitSwitchState() {
+    return !ArmlimitSwitchBack.get();
   }
 
-  public boolean isTriggeredArm(){
-    return armTriggered;
+  public boolean isTriggeredArmBack(){
+    return armTriggeredBack;
+  }
+
+  private boolean getArmForwardLimitSwitchState() {
+    return !ArmlimitSwitchForward.get();
+  }
+
+  public boolean isTriggeredArmForward(){
+    return armTriggeredForward;
   }
 
 }

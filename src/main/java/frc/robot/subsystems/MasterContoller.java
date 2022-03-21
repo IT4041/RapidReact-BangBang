@@ -22,7 +22,7 @@ public class MasterContoller extends SubsystemBase {
   private final IntakeWheels m_IntakeWheels;
   private final Feeder m_Feeder;
   private final ColorSensor m_ColorSensor;
-  private final Lift m_lift;
+  private final Lift_Brushed m_lift;
   private final Arms m_arms;
   private final IntakeElbow m_intakeElbow;
 
@@ -32,7 +32,7 @@ public class MasterContoller extends SubsystemBase {
   private boolean m_target = false;
 
   public MasterContoller(Indexer in_Indexer, Turret in_Turret, BangBangShooter in_Shooter, LimeLight in_LimeLight,
-      IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor, Lift in_lift, Arms in_arms, IntakeElbow in_intakeElbow) {
+      IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor, Lift_Brushed in_lift, Arms in_arms, IntakeElbow in_intakeElbow) {
     m_Indexer = in_Indexer;
     m_Turret = in_Turret;
     m_Shooter = in_Shooter;

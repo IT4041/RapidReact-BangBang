@@ -116,13 +116,17 @@ public class Constants {
 
 	public static final class LiftConstants {
         public static final int LiftSparkMax = 32;
+        public static final int LiftTalonSRX = 50;
         public static final int Top = -240;
         public static final int Home = 0;
+
+        public static final int Top_SRX = 999000;
+        public static final int Home_SRX = 0;
     }
 
     public static final class ArmsConstants {
         public static final int ArmsSparkMax = 8;
-        public static final int Reverse = -200;
+        public static final int Reverse = -180;
         public static final int Home = 0;
         public static final int Forward = 62;
         
@@ -130,7 +134,8 @@ public class Constants {
 
     public static final class LimitSwitchConstants {
         public static final int ElbowLimitSwitch = 0;
-        public static final int ArmLimitSwitch = 1;
+        public static final int ArmLimitSwitchBack = 1;
+        public static final int ArmLimitSwitchForward = 2;
     }
     
 
