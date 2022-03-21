@@ -66,8 +66,9 @@ public class SingleBallAutoWithTargeting extends SequentialCommandGroup {
     
 
     addCommands(
+      // enabling Targetting and shooting puts intake elbow down
       new InstantCommand(m_masterController::enabledTargetingAndShooting,m_masterController),
-      new WaitCommand(.5),
+      new WaitCommand(2),
       new InstantCommand(m_masterController::disabledTargetingAndShooting,m_masterController),
       new InstantCommand(m_masterController::intakeWheelsOn,m_masterController),
 
@@ -75,7 +76,7 @@ public class SingleBallAutoWithTargeting extends SequentialCommandGroup {
 
       new InstantCommand(m_masterController::intakeWheelsOff,m_masterController),
       new InstantCommand(m_masterController::enabledTargetingAndShooting,m_masterController),
-      new WaitCommand(.5),
+      new WaitCommand(2),
       new InstantCommand(m_masterController::disabledTargetingAndShooting,m_masterController)
 
     );
