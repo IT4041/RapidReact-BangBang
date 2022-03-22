@@ -34,12 +34,12 @@ public class Robot extends TimedRobot {
   public RobotContainer m_robotContainer;
 
   String basePath = "pathplanner/generatedJSON/";
-  String OneB1_dir = "OneBall1_Path.wpilib.json";
-  String TwoB1_dir = "TwoBall1_Path.wpilib.json";
-  String straightback_dir = "StraightBackPath.wpilib.json";
+  String OneBall_dir = "ReverseTurretOneBall_Path.wpilib.json";
+  String TwoBall_dir = "ReverseTurretTwoBall_Path.wpilib.json";
+  String straightback_dir = "ReverseTurretStraightBack_Path.wpilib.json";
 
-  Trajectory Traj_OneB1; 
-  Trajectory Traj_TwoB1; 
+  Trajectory Traj_OneBall; 
+  Trajectory Traj_TwoBall; 
   Trajectory traj_StraightBack;
 
   @Override
@@ -53,6 +53,8 @@ public class Robot extends TimedRobot {
 
     CameraServer.startAutomaticCapture();
     SmartDashboard.putString("Auto", "none");
+
+    m_robotContainer.resetFirstLift();
 
   }
 
@@ -119,7 +121,6 @@ public class Robot extends TimedRobot {
 
     m_robotContainer.enableAutoIndexing();
     m_robotContainer.isTele();
-    m_robotContainer.resetFirstLift();
                       
   }
 
@@ -149,15 +150,15 @@ public class Robot extends TimedRobot {
     Trajectory[] trajectories = new Trajectory[3];
     
     try {
-      Path Path_OneB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneB1_dir );
-      Traj_OneB1 = TrajectoryUtil.fromPathweaverJson(Path_OneB1);
+      Path Path_OneB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneBall_dir );
+      Traj_OneBall = TrajectoryUtil.fromPathweaverJson(Path_OneB1);
       System.out.println("One ball 1 open");
-      trajectories[0] = Traj_OneB1;
+      trajectories[0] = Traj_OneBall;
 
-      Path Path_TwoB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoB1_dir );
-      Traj_TwoB1 = TrajectoryUtil.fromPathweaverJson(Path_TwoB1);
+      Path Path_TwoB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoBall_dir );
+      Traj_TwoBall = TrajectoryUtil.fromPathweaverJson(Path_TwoB1);
       System.out.println("One ball 1 open");
-      trajectories[1] = Traj_TwoB1;
+      trajectories[1] = Traj_TwoBall;
 
       Path Path_straightback = Filesystem.getDeployDirectory().toPath().resolve(basePath + straightback_dir );
       traj_StraightBack = TrajectoryUtil.fromPathweaverJson(Path_straightback);

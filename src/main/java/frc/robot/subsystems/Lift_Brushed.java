@@ -52,7 +52,7 @@ public class Lift_Brushed extends SubsystemBase {
     LiftTalon.configPeakOutputForward(kMaxOutput, 30);
     LiftTalon.configPeakOutputReverse(kMinOutput, 30);
 
-    LiftTalon.configPeakCurrentLimit(80, 30);
+    LiftTalon.configPeakCurrentLimit(60, 30);
     LiftTalon.configPeakCurrentDuration(100, 30);
     LiftTalon.configContinuousCurrentLimit(15, 30);
     LiftTalon.enableCurrentLimit(true);
