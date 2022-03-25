@@ -129,11 +129,11 @@ public class MasterContoller extends SubsystemBase {
   private void doTargeting() {
     m_LimeLight.ledOn();
     m_Shooter.enable();
-    m_Shooter.on(85);// A distance of 85 is at the tarmac line(optimal shooting distance)
+    m_Shooter.spin(85);// priming with a distance of 85" aka at the tarmac edge(optimal shooting distance)
     m_Turret.targetingEnabled(m_LimeLight.getXOffset());
     if (m_Turret.onTarget() && m_LimeLight.hasValidTarget()) {
-      m_Shooter.on(m_LimeLight.getDistance());
-      Timer.delay(.25);
+      m_Shooter.spin(m_LimeLight.getDistance());
+      Timer.delay(.1);
       m_Indexer.shoot();
     }
   }

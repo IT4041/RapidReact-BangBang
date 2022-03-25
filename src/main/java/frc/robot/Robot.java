@@ -122,7 +122,6 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.enableAutoIndexing();
-    //m_robotContainer.isTele();
                       
   }
 

@@ -24,14 +24,12 @@ public class BangBangShooter extends SubsystemBase {
 
   private double RPM_Target = 0;
   private double RPM_multiplication_factor = 0.001;
-  private double scaledVelo = 0;
 
   private double kstatic = 0.0008;
   private double kvelocity = 0.19;
   private double kacceleraton = 0.13;
 
   private boolean enabled = false;
-  private boolean isTele = false;
   private boolean failSafe = false;
 
   /** Creates a new BangBangShooter. */
@@ -64,8 +62,6 @@ public class BangBangShooter extends SubsystemBase {
     SmartDashboard.putBoolean("Shooter Enabled", enabled);
     SmartDashboard.putNumber("kstatic", kstatic);
     SmartDashboard.putNumber("RPM_multiplication_factor", RPM_multiplication_factor);
-    SmartDashboard.putNumber("scaledVelo", scaledVelo);
-    SmartDashboard.putBoolean("isTele", isTele);
 
   }
 
@@ -73,13 +69,11 @@ public class BangBangShooter extends SubsystemBase {
   public void periodic() {
 
     SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
-    SmartDashboard.putNumber("scaledVelo", scaledVelo);
-    SmartDashboard.putBoolean("isTele", isTele);
 
-    //TODO: remove this test code prior to competition
+    // TODO: remove this test code prior to competition
     // double targetRPM = SmartDashboard.getNumber("Target RPM", RPM_Target);
     // if (targetRPM != RPM_Target) {
-    //   RPM_Target = targetRPM;
+    // RPM_Target = targetRPM;
     // }
 
     double BangBangOutPut = bangBangController.calculate(encoder.getVelocity(), RPM_Target) + 0.9 * feedforward.calculate(RPM_Target);
@@ -91,74 +85,64 @@ public class BangBangShooter extends SubsystemBase {
     SmartDashboard.putNumber("RPM diff", (RPM_Target * RPM_multiplication_factor) - encoder.getVelocity());
     SmartDashboard.putBoolean("Shooter Enabled", enabled);
 
-    //if(false){
-    if(isTele){
-
-      if(enabled){
-        sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));  
-      }else if(failSafe){
-        sparkMax2.set(RPM_Target);
-      }else{//disabled
-        sparkMax2.set(0.0);
-        RPM_Target = 0.0;
-      }
-    }
-    else{
+    if (enabled) {
+      sparkMax2.set(bangBangController.calculate(encoder.getVelocity(), RPM_Target) + (0.9 * feedforward.calculate(RPM_Target)));
+    } else if (failSafe) {
       sparkMax2.set(RPM_Target);
+    } else {// disabled
+      sparkMax2.set(0.0);
+      RPM_Target = 0.0;
     }
+
   }
 
   private double calculateRPMs(double distance) {
 
     double bbControllerValue;
 
-    //Tommy's formula: y= -4808.15*.99^x+5800
-    //Tommy's formula #2: y= -3558.53 *.975^x + 3750
-    //Tommy's formula #3: y = -20.8333 * 1.03105^x + 3160-- not correct
-    //Tommy's formula #4: y= 21.8274 * 1.03076 ^x + 3150
+    // Tommy's formula: y= -4808.15*.99^x+5800
+    // Tommy's formula #2: y= -3558.53 *.975^x + 3750
+    // Tommy's formula #3: y = -20.8333 * 1.03105^x + 3160-- not correct
+    // Tommy's formula #4: y= 21.8274 * 1.03076 ^x + 3150
 
     // formula #4
-    double temp = (21.8274 * Math.pow(1.03076,distance)) + 3150;
+    double temp = (21.8274 * Math.pow(1.03076, distance)) + 3150;
 
     bbControllerValue = temp * RPM_multiplication_factor;
-    
+
     SmartDashboard.putNumber("Calculated RPMS", bbControllerValue);
     return bbControllerValue;
   }
 
-  public void on(double distance) {
+  public void spin(double distance) {
     RPM_Target = this.calculateRPMs(distance);
   }
 
-  public void failSafeShoot(){
+  public void failSafeShoot() {
     this.setRPM(0.56);
   }
 
-  public void setFailSafe(boolean inFailSafe){
+  public void setFailSafe(boolean inFailSafe) {
     this.failSafe = inFailSafe;
   }
-  
-  public void enable(){
+
+  public void enable() {
     enabled = true;
   }
 
-  public void disable(){
+  public void disable() {
     enabled = false;
   }
 
-  public void setIsTele(){
-    isTele = true;
-  }
-
-  public void setShotRpmFar(){
+  public void setShotRpmFar() {
     this.setRPM(0.60);
   }
 
-  public void setShotRpmClose(){
+  public void setShotRpmClose() {
     this.setRPM(0.58);
   }
 
-  public void setRPM(double rpm){
+  public void setRPM(double rpm) {
     this.RPM_Target = rpm;
     SmartDashboard.putNumber("Target RPM", this.RPM_Target);
   }

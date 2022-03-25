@@ -149,10 +149,6 @@ public class RobotContainer {
     indexer.setAutoIndexOn();
   }
 
-  public void enableShooter() {
-    bbshooter.enable();
-  }
-
   public void resetFirstLift() {
     masterController.resetFirstLift();
   }
