@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -20,7 +19,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,11 +34,15 @@ public class Robot extends TimedRobot {
   String basePath = "pathplanner/generatedJSON/";
   String OneBall_dir = "ReverseTurretOneBall_Path.wpilib.json";
   String TwoBall_dir = "ReverseTurretTwoBall_Path.wpilib.json";
-  String straightback_dir = "ReverseTurretStraightBack_Path.wpilib.json";
+  String ThreeBall_dir = "ReverseTurretThreeBall_Path.wpilib.json";
+  String FiveBall1_dir = "ReverseTurretFiveBallTraj1_Path.wpilib.json";
+  String FiveBall2_dir = "ReverseTurretFiveBallTraj2_Path.wpilib.json";
 
-  Trajectory Traj_OneBall; 
+  Trajectory Traj_OneBall;
   Trajectory Traj_TwoBall; 
-  Trajectory traj_StraightBack;
+  Trajectory Traj_ThreeBall; 
+  Trajectory Traj_FiveBall1; 
+  Trajectory Traj_FiveBall2;
 
   @Override
   public void robotInit() {
@@ -120,7 +122,7 @@ public class Robot extends TimedRobot {
     }
 
     m_robotContainer.enableAutoIndexing();
-    m_robotContainer.isTele();
+    //m_robotContainer.isTele();
                       
   }
 
@@ -128,10 +130,7 @@ public class Robot extends TimedRobot {
    * This function is called periodically during operator control.
    */
   @Override
-  public void teleopPeriodic() {
-
-    m_robotContainer.isTele();
-    }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
@@ -147,23 +146,34 @@ public class Robot extends TimedRobot {
 
   private Trajectory[] loadTrajectories(){
 
-    Trajectory[] trajectories = new Trajectory[3];
+    Trajectory[] trajectories = new Trajectory[5];
     
     try {
-      Path Path_OneB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneBall_dir );
-      Traj_OneBall = TrajectoryUtil.fromPathweaverJson(Path_OneB1);
-      System.out.println("One ball 1 open");
+
+      Path Path_OneBall = Filesystem.getDeployDirectory().toPath().resolve(basePath + OneBall_dir );
+      Traj_OneBall = TrajectoryUtil.fromPathweaverJson(Path_OneBall);
+      System.out.println("One Ball open");
       trajectories[0] = Traj_OneBall;
 
-      Path Path_TwoB1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoBall_dir );
-      Traj_TwoBall = TrajectoryUtil.fromPathweaverJson(Path_TwoB1);
-      System.out.println("One ball 1 open");
+      Path Path_TwoBall = Filesystem.getDeployDirectory().toPath().resolve(basePath + TwoBall_dir );
+      Traj_TwoBall = TrajectoryUtil.fromPathweaverJson(Path_TwoBall);
+      System.out.println("Two ball open");
       trajectories[1] = Traj_TwoBall;
 
-      Path Path_straightback = Filesystem.getDeployDirectory().toPath().resolve(basePath + straightback_dir );
-      traj_StraightBack = TrajectoryUtil.fromPathweaverJson(Path_straightback);
-      System.out.println("Straight Back open");
-      trajectories[2] = traj_StraightBack;
+      Path Path_ThreeBall = Filesystem.getDeployDirectory().toPath().resolve(basePath + ThreeBall_dir );
+      Traj_ThreeBall = TrajectoryUtil.fromPathweaverJson(Path_ThreeBall);
+      System.out.println("Three ball open");
+      trajectories[2] = Traj_ThreeBall;
+
+      Path Path_FiveBall1 = Filesystem.getDeployDirectory().toPath().resolve(basePath + FiveBall1_dir );
+      Traj_FiveBall1 = TrajectoryUtil.fromPathweaverJson(Path_FiveBall1);
+      System.out.println("Five Ball 1 open");
+      trajectories[3] = Traj_FiveBall1;
+
+      Path Path_FiveBall2 = Filesystem.getDeployDirectory().toPath().resolve(basePath + FiveBall2_dir );
+      Traj_FiveBall2 = TrajectoryUtil.fromPathweaverJson(Path_FiveBall2);
+      System.out.println("Five Ball 2 open");
+      trajectories[4] = Traj_FiveBall2;
 
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory", ex.getStackTrace());

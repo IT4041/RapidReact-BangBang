@@ -20,14 +20,14 @@ import frc.robot.subsystems.DriveTrain;
 public class TrajectoryOnly extends SequentialCommandGroup {
 
         private Trajectory m_Trajectory1;
-        private Trajectory m_Trajectory2;
+        // private Trajectory m_Trajectory2;
         private DriveTrain m_drivetrain;
 
         /** Creates a new AutoTest2. */
-        public TrajectoryOnly(DriveTrain in_drivetrain, Trajectory in_trajectory1, Trajectory in_trajectory2) {
+        public TrajectoryOnly(DriveTrain in_drivetrain, Trajectory in_trajectory1){ //, Trajectory in_trajectory2) {
                 
                 m_Trajectory1 = in_trajectory1;
-                m_Trajectory2 = in_trajectory2;
+                // m_Trajectory2 = in_trajectory2;
                 m_drivetrain = in_drivetrain;
 
                 var table = NetworkTableInstance.getDefault().getTable("troubleshooting");
@@ -63,37 +63,37 @@ public class TrajectoryOnly extends SequentialCommandGroup {
                                 },
                                 m_drivetrain);
 
-                RamseteCommand ramseteCommand2 = new RamseteCommand(
-                                m_Trajectory2,
-                                m_drivetrain::getPose,
-                                new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-                                new SimpleMotorFeedforward(
-                                                DriveConstants.ksVolts,
-                                                DriveConstants.kvVoltSecondsPerMeter,
-                                                DriveConstants.kaVoltSecondsSquaredPerMeter),
-                                DriveConstants.kDriveKinematics,
-                                m_drivetrain::getWheelSpeeds,
-                                leftController,
-                                rightController,
-                                // RamseteCommand passes volts to the callback
-                                (leftVolts, rightVolts) -> {
-                                        m_drivetrain.tankDriveVolts(leftVolts, rightVolts);
+                // RamseteCommand ramseteCommand2 = new RamseteCommand(
+                //                 m_Trajectory2,
+                //                 m_drivetrain::getPose,
+                //                 new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+                //                 new SimpleMotorFeedforward(
+                //                                 DriveConstants.ksVolts,
+                //                                 DriveConstants.kvVoltSecondsPerMeter,
+                //                                 DriveConstants.kaVoltSecondsSquaredPerMeter),
+                //                 DriveConstants.kDriveKinematics,
+                //                 m_drivetrain::getWheelSpeeds,
+                //                 leftController,
+                //                 rightController,
+                //                 // RamseteCommand passes volts to the callback
+                //                 (leftVolts, rightVolts) -> {
+                //                         m_drivetrain.tankDriveVolts(leftVolts, rightVolts);
 
-                                        leftMeasurement.setNumber(m_drivetrain.getWheelSpeeds().leftMetersPerSecond);
-                                        leftReference.setNumber(leftController.getSetpoint());
+                //                         leftMeasurement.setNumber(m_drivetrain.getWheelSpeeds().leftMetersPerSecond);
+                //                         leftReference.setNumber(leftController.getSetpoint());
 
-                                        rightMeasurement.setNumber(m_drivetrain.getWheelSpeeds().rightMetersPerSecond);
-                                        rightReference.setNumber(rightController.getSetpoint());
-                                },
-                                m_drivetrain);
+                //                         rightMeasurement.setNumber(m_drivetrain.getWheelSpeeds().rightMetersPerSecond);
+                //                         rightReference.setNumber(rightController.getSetpoint());
+                //                 },
+                //                 m_drivetrain);
 
                 // Reset odometry to the starting pose of the trajectory.
                 m_drivetrain.resetOdometry(m_Trajectory1.getInitialPose());
 
                 addCommands(
-                        ramseteCommand1,
-                        new WaitCommand(2),
-                        ramseteCommand2
+                        ramseteCommand1//,
+                        // new WaitCommand(2),
+                        // ramseteCommand2
                         );
         }
 }

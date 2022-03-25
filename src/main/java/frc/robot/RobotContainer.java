@@ -15,10 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import frc.robot.commands.auto.groups.SingleBallAuto;
-import frc.robot.commands.auto.groups.SingleBallAutoWithTargeting;
-//import frc.robot.commands.auto.groups.ThreeBallAuto;
-import frc.robot.commands.auto.groups.TwoBallAuto;
+import frc.robot.commands.auto.groups.SingleTrajectoryAutoWithTargeting;
+//import frc.robot.commands.auto.groups.TrajectoryOnly;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
 import frc.robot.subsystems.*;
@@ -50,10 +48,11 @@ public class RobotContainer {
 
   private SendableChooser<Command> m_chooser;
   private Trajectory[] m_trajectories;
-  private SingleBallAuto OneB1;
-  private TwoBallAuto TwoB1;
-  private SingleBallAuto StraightBack;
-  private SingleBallAutoWithTargeting OneB1WithTargeting;
+  private SingleTrajectoryAutoWithTargeting OneBall;
+  private SingleTrajectoryAutoWithTargeting TwoBall;
+  private SingleTrajectoryAutoWithTargeting ThreeBall;
+  //private DoubleTrajectoryAutoWithTargeting FiveBall;
+  //private TrajectoryOnly TrajOnly;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -64,17 +63,19 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    this.OneB1 = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[0]);
-    this.OneB1WithTargeting = new SingleBallAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
-    this.TwoB1 = new TwoBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[1]);
-    this.StraightBack = new SingleBallAuto(turret,bbshooter,intakeElbow,indexer,intakeWheels,driveTrain,m_trajectories[2]);
+    //this.TrajOnly = new TrajectoryOnly(driveTrain, m_trajectories[2]);
+
+    this.OneBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
+    this.TwoBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[1]);
+    this.ThreeBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[2]);
+    //this.FiveBall = new DoubleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[3],m_trajectories[4]);
 
     this.m_chooser = new SendableChooser<Command>();
 
-    this.m_chooser.setDefaultOption("One Ball", this.OneB1);
-    this.m_chooser.addOption("Two Ball", this.TwoB1);
-    this.m_chooser.addOption("Straight Back", this.StraightBack);
-    this.m_chooser.addOption("One Ball with Targeting", this.OneB1WithTargeting);
+    this.m_chooser.setDefaultOption("Three Ball", this.ThreeBall);
+    this.m_chooser.addOption("Two Ball", this.TwoBall);
+    this.m_chooser.addOption("One Ball - Straight Back", this.OneBall);
+    //this.m_chooser.addOption("Five Ball", this.FiveBall);
 
     // Put the chooser on the dashboard
     SmartDashboard.putData(this.m_chooser);
@@ -137,6 +138,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     System.out.println("getAutonomousCommand");
     return m_chooser.getSelected();
+    //return this.TrajOnly;
   }
 
   public void disabledLEDS() {
@@ -149,10 +151,6 @@ public class RobotContainer {
 
   public void enableShooter() {
     bbshooter.enable();
-  }
-
-  public void isTele() {
-    bbshooter.setIsTele();
   }
 
   public void resetFirstLift() {

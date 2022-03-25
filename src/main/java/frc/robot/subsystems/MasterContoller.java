@@ -54,21 +54,20 @@ public class MasterContoller extends SubsystemBase {
     // This method will be called once per scheduler run
     if (m_target) {
       if (m_ColorSensor.BallIsWrongColor()) {
-        m_Turret.turn30degreesPositive();
         m_Shooter.disable();
         m_Shooter.setFailSafe(true);
-        m_Shooter.setRPM(.4);
-        Timer.delay(.5);
+        m_Shooter.setRPM(.345);
+        m_Turret.turn30degreesPositive();
+        Timer.delay(.25);
         m_Indexer.shoot();
-        Timer.delay(2);
+        Timer.delay(1);
         m_Indexer.off();
         m_Shooter.setFailSafe(false);
         m_Shooter.enable();
-        m_Turret.turn30degreesNegative();
+        m_Turret.reset();
       } else {
         this.doTargeting();
       }
-
     } else {
       this.stopTargeting();
     }
@@ -130,7 +129,7 @@ public class MasterContoller extends SubsystemBase {
   private void doTargeting() {
     m_LimeLight.ledOn();
     m_Shooter.enable();
-    m_Shooter.on(85);
+    m_Shooter.on(85);// A distance of 85 is at the tarmac line(optimal shooting distance)
     m_Turret.targetingEnabled(m_LimeLight.getXOffset());
     if (m_Turret.onTarget() && m_LimeLight.hasValidTarget()) {
       m_Shooter.on(m_LimeLight.getDistance());

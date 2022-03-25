@@ -120,7 +120,7 @@ public class Constants {
         public static final int Top = -240;
         public static final int Home = 0;
 
-        public static final int Top_SRX = 999000;
+        public static final int Top_SRX = 1020000;
         public static final int Home_SRX = 0;
     }
 

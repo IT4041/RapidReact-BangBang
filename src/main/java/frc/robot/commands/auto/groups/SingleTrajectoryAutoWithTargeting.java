@@ -9,34 +9,23 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.BangBangShooter;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.IntakeElbow;
-import frc.robot.subsystems.IntakeWheels;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.MasterContoller;
+
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 
-public class SingleBallAuto extends SequentialCommandGroup {
+public class SingleTrajectoryAutoWithTargeting extends SequentialCommandGroup {
 
-  private BangBangShooter m_shooter;
-  private IntakeElbow m_intakeElbow;
-  private Indexer m_Indexer;
-  private IntakeWheels m_intakeWheels;
+  private MasterContoller m_masterController;
   private DriveTrain m_drivetrain;
   private Trajectory m_trajectory;
-  private Turret m_turret;
 
-  public SingleBallAuto(Turret in_turret, BangBangShooter in_shooter, IntakeElbow in_intakeElbow, Indexer in_Indexer, IntakeWheels in_intakeWheels, DriveTrain in_drivetrain, Trajectory in_trajectory) {
+  public SingleTrajectoryAutoWithTargeting(MasterContoller in_masterController, DriveTrain in_drivetrain, Trajectory in_trajectory) {
 
-    m_shooter = in_shooter;
-    m_intakeElbow = in_intakeElbow;
-    m_Indexer = in_Indexer;
-    m_intakeWheels = in_intakeWheels;
+    m_masterController = in_masterController;
     m_drivetrain = in_drivetrain;
     m_trajectory = in_trajectory;
-    m_turret = in_turret;
 
     var leftController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
     var rightController = new PIDController(DriveConstants.kPDriveVel, 0, 0);
@@ -76,39 +65,19 @@ public class SingleBallAuto extends SequentialCommandGroup {
     
 
     addCommands(
-      new InstantCommand(m_intakeElbow::down,m_intakeElbow),
-      new WaitCommand(.2),
-      new InstantCommand(m_turret::turn20degreesNegative,m_turret),//1
-      new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
-      new InstantCommand(m_shooter::setShotRpmClose,m_shooter),
-      new InstantCommand(m_shooter::enable,m_shooter),
-      new WaitCommand(1),
-      new InstantCommand(m_Indexer::shoot, m_Indexer),
-      new WaitCommand(1),
-      new InstantCommand(m_Indexer::off, m_Indexer),
-      //new InstantCommand(m_turret::reset,m_turret),//-1
-
-      new InstantCommand(m_shooter::disable,m_shooter),
-      new InstantCommand(m_Indexer::setAutoIndexOn, m_Indexer),
-      new InstantCommand(m_intakeWheels::on,m_intakeWheels),
-      //new InstantCommand(m_turret::turn20degreesPositive,m_turret),//2
+      // enabling Targetting and shooting puts intake elbow down
+      new InstantCommand(m_masterController::enabledTargetingAndShooting,m_masterController),
+      new WaitCommand(3),
+      new InstantCommand(m_masterController::disabledTargetingAndShooting,m_masterController),
+      new InstantCommand(m_masterController::intakeWheelsOn,m_masterController),
 
       ramseteCommand.andThen(new InstantCommand(m_drivetrain::setBrake,m_drivetrain).andThen(new InstantCommand(m_drivetrain::tankDriveVoltageStop,m_drivetrain))),
 
-      new InstantCommand(m_shooter::enable,m_shooter),
-      new WaitCommand(1),
-      new InstantCommand(m_intakeWheels::off,m_intakeWheels),
-      new InstantCommand(m_Indexer::setAutoIndexOff, m_Indexer),
-      new InstantCommand(m_Indexer::shoot, m_Indexer),
-      new WaitCommand(2),
-      new InstantCommand(m_shooter::disable,m_shooter),
-      new InstantCommand(m_shooter::setIsTele,m_shooter),
-      new InstantCommand(m_turret::reset,m_turret),//-2
-      new WaitCommand(1),
-      
-      //TODO: remove this prior to comp
-      //new InstantCommand(m_intakeElbow::up,m_intakeElbow),
-      new InstantCommand(m_Indexer::off, m_Indexer)
+      new InstantCommand(m_masterController::intakeWheelsOff,m_masterController),
+      new InstantCommand(m_masterController::enabledTargetingAndShooting,m_masterController),
+      new WaitCommand(3),
+      new InstantCommand(m_masterController::disabledTargetingAndShooting,m_masterController)
+
     );
   }
 }
