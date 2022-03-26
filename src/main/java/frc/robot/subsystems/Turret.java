@@ -44,7 +44,7 @@ public class Turret extends SubsystemBase {
   private double clicksPerDegree = -1.75;//-1.6666667;
   private double m_xOffset = 0.0; // x offset reported by limelight
   private final int maxOffset = 60; // Maximum x offset allow
-  private final int tolerance = 2; // clicks off target
+  private final int tolerance = 3; // clicks off target
 
   public Turret() {
 

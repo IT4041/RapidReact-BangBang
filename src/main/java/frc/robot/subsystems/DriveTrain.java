@@ -179,7 +179,7 @@ public class DriveTrain extends SubsystemBase {
    * @param rot the commanded rotation
    */
   public void arcadeDrive(double FWD, double ROT) {
-    m_drive.arcadeDrive(ROT*0.65,FWD*0.825);
+    m_drive.arcadeDrive(ROT*0.65,FWD*0.825, true);
   }
 
   /**

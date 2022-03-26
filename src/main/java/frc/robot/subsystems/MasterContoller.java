@@ -93,12 +93,13 @@ public class MasterContoller extends SubsystemBase {
     m_intakeElbow.down();
     m_Indexer.setAutoIndexOff();
     if (m_failSafe) {
+      m_Shooter.disable();
       m_target = false;
+      m_Shooter.setFailSafe(true);
+      m_Shooter.failSafeShoot();
       // lock turret straight forward
       m_Turret.targetingDisabled(true);
       // set shooter head to 1/2 throttle
-      m_Shooter.setFailSafe(true);
-      m_Shooter.failSafeShoot();
       // turn on indexer
       Timer.delay(.25);
       m_Indexer.shoot();
@@ -116,11 +117,13 @@ public class MasterContoller extends SubsystemBase {
 
   public void disabledTargetingAndShooting() {
     m_target = false;
+
     m_Indexer.off();
     m_Indexer.setAutoIndexOn();
     if (m_failSafe) {
       m_Shooter.setRPM(0);
       m_Feeder.off();
+      m_Shooter.enable();
     }
   }
   // ***********************************************************
@@ -212,5 +215,9 @@ public class MasterContoller extends SubsystemBase {
 
   public void resetFirstLift(){
     m_lift.resetFirstLift();
+  }
+
+  public void spinShooter(){
+    m_Shooter.spin(85);
   }
 }

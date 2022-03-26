@@ -119,7 +119,7 @@ public class BangBangShooter extends SubsystemBase {
   }
 
   public void failSafeShoot() {
-    this.setRPM(0.56);
+    this.setRPM(0.585);
   }
 
   public void setFailSafe(boolean inFailSafe) {
