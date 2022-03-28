@@ -1,15 +1,11 @@
 package frc.robot.commands.auto.groups;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.MasterContoller;
 
-
-import frc.robot.Constants.DriveConstants;
 
 public class OneBallOldSchoolWithTargeting extends SequentialCommandGroup {
 
