@@ -291,4 +291,31 @@ public class DriveTrain extends SubsystemBase {
   private double getRightDistance() {
     return -(topRightTalon.getSelectedSensorPosition() * FalconDriveConstants.distancePerPulse);
   }
+  /**
+ * drives backwards at .25 speed
+ */
+public void autoDriveBack()
+{
+  m_leftMotors.set(.25);
+  m_rightMotors.set(-.25);
+  m_drive.feed();
+}
+/**
+ * drives forwards at .25 speed
+ */
+public void autoDriveForward()
+{
+  m_leftMotors.set(-.25);
+  m_rightMotors.set(.25);
+  m_drive.feed();
+
+}
+/**
+ * stops the auto driving
+ */
+public void autoDriveStop()
+{
+  m_leftMotors.set(0);
+  m_rightMotors.set(0);
+}
 }
