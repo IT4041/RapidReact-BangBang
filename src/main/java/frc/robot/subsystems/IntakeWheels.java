@@ -41,12 +41,12 @@ public class IntakeWheels extends SubsystemBase {
   }
 
   public void on(){
-    sparkMaxWheels.set(0.85);
+    sparkMaxWheels.set(0.55);
     wheelsOn = true;
   }
 
   public void reverse(){
-    sparkMaxWheels.set(-0.85);
+    sparkMaxWheels.set(-0.55);
   }
 
   public void off(){
