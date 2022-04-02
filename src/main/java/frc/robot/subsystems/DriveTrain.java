@@ -296,8 +296,8 @@ public class DriveTrain extends SubsystemBase {
  */
 public void autoDriveBack()
 {
-  m_leftMotors.set(.25);
-  m_rightMotors.set(-.25);
+  m_leftMotors.set(.2);
+  m_rightMotors.set(-.2);
   m_drive.feed();
 }
 /**
@@ -305,8 +305,8 @@ public void autoDriveBack()
  */
 public void autoDriveForward()
 {
-  m_leftMotors.set(-.25);
-  m_rightMotors.set(.25);
+  m_leftMotors.set(-.2);
+  m_rightMotors.set(.2);
   m_drive.feed();
 
 }

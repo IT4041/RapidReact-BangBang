@@ -143,8 +143,8 @@ public class MasterContoller extends SubsystemBase {
 
   private void stopTargeting() {
     m_LimeLight.ledOff();
-    boolean reset = DriverStation.isAutonomous() ? false : true;
-    m_Turret.targetingDisabled(reset);
+    //boolean reset = DriverStation.isAutonomous() ? false : true;
+    m_Turret.targetingDisabled(true);
     m_Shooter.disable();
   }
 

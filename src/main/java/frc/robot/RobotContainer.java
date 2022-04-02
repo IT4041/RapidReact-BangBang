@@ -16,9 +16,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.robot.commands.auto.groups.DualTrajectoryAutoWithTargeting;
+import frc.robot.commands.auto.groups.OneBallOldSchoolWithTargeting;
 import frc.robot.commands.auto.groups.SingleTrajectoryAutoWithTargeting;
-import frc.robot.commands.auto.groups.TrajectoryOnlyDual;
-import frc.robot.commands.auto.groups.TrajectoryOnlySingle;
+// import frc.robot.commands.auto.groups.TrajectoryOnlyDual;
+// import frc.robot.commands.auto.groups.TrajectoryOnlySingle;
+import frc.robot.commands.auto.groups.TwoBallOldSchoolWithTargeting;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
 import frc.robot.subsystems.*;
@@ -50,11 +52,14 @@ public class RobotContainer {
 
   private SendableChooser<Command> m_chooser;
   private Trajectory[] m_trajectories;
-  private SingleTrajectoryAutoWithTargeting OneBall;
-  private SingleTrajectoryAutoWithTargeting TwoBall;
+  //private SingleTrajectoryAutoWithTargeting OneBall;
+  //private SingleTrajectoryAutoWithTargeting TwoBall;
   private SingleTrajectoryAutoWithTargeting ThreeBall;
   private DualTrajectoryAutoWithTargeting FiveBall;
-  private TrajectoryOnlySingle TrajOnlySingle;
+  //private TrajectoryOnlySingle TrajOnlySingle;
+
+  private OneBallOldSchoolWithTargeting OneBallOldSchool;
+  private TwoBallOldSchoolWithTargeting TwoBallOldSchool;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -65,20 +70,25 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    this.TrajOnlySingle = new TrajectoryOnlySingle(driveTrain, m_trajectories[0]);
+    //this.TrajOnlySingle = new TrajectoryOnlySingle(driveTrain, m_trajectories[0]);
 
-    this.OneBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
-    this.TwoBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[1]);
+    this.OneBallOldSchool = new OneBallOldSchoolWithTargeting(masterController, driveTrain);
+    this.TwoBallOldSchool = new TwoBallOldSchoolWithTargeting(masterController, driveTrain);
+
+    //this.OneBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
+    //this.TwoBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[1]);
     this.ThreeBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[2]);
     this.FiveBall = new DualTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[3],m_trajectories[4]);
 
     this.m_chooser = new SendableChooser<Command>();
 
-    this.m_chooser.setDefaultOption("Three Ball", this.ThreeBall);
-    this.m_chooser.addOption("Two Ball", this.TwoBall);
-    this.m_chooser.addOption("One Ball - Straight Back", this.OneBall);
-    this.m_chooser.addOption("Five Ball", this.FiveBall);
-    this.m_chooser.addOption("Trajectory Only", this.TrajOnlySingle);
+    this.m_chooser.setDefaultOption("Five Ball", this.FiveBall);
+    this.m_chooser.addOption("Three Ball", this.ThreeBall);
+    //this.m_chooser.addOption("Two Ball", this.TwoBall);
+    //this.m_chooser.addOption("One Ball - Straight Back", this.OneBall);
+    this.m_chooser.addOption("Two Ball", this.TwoBallOldSchool);
+    this.m_chooser.addOption("One Ball", this.OneBallOldSchool);
+    //this.m_chooser.addOption("Trajectory Only", this.TrajOnlySingle);
 
 
     // Put the chooser on the dashboard
