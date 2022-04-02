@@ -41,7 +41,7 @@ public class RobotContainer {
 
   public final DriveTrain driveTrain = new DriveTrain(navX);
   private final Feeder feeder = new Feeder();
-  private final Lift_Brushed lift = new Lift_Brushed();
+  private final Lift_Falcon lift = new Lift_Falcon();
   private final Arms arms = new Arms(magSwitches);
   private final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow(magSwitches);

@@ -117,11 +117,15 @@ public class Constants {
 	public static final class LiftConstants {
         public static final int LiftSparkMax = 32;
         public static final int LiftTalonSRX = 50;
+        public static final int LiftTalonFX = 25;
         public static final int Top = -240;
         public static final int Home = 0;
 
         public static final int Top_SRX = 1020000;
         public static final int Home_SRX = 0;
+
+        public static final int top_brake_threshold = 950000;
+        public static final int bottom_brake_threshold = 60000;
     }
 
     public static final class ArmsConstants {
