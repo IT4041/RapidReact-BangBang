@@ -65,6 +65,7 @@ public class Indexer extends SubsystemBase {
           this.bumpBack();
         }
         this.m_bumped = true;
+        this.on=false;
       }
     }
     else{
