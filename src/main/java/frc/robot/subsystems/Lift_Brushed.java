@@ -52,7 +52,7 @@ public class Lift_Brushed extends SubsystemBase {
     LiftTalon.configPeakOutputForward(kMaxOutput, 30);
     LiftTalon.configPeakOutputReverse(kMinOutput, 30);
 
-    LiftTalon.configPeakCurrentLimit(85, 30);
+    LiftTalon.configPeakCurrentLimit(65, 30);
     LiftTalon.configPeakCurrentDuration(75, 30);
     LiftTalon.configContinuousCurrentLimit(40, 30);
     LiftTalon.enableCurrentLimit(true);
@@ -72,7 +72,7 @@ public class Lift_Brushed extends SubsystemBase {
       }
       else{
         // we're close, so slow down
-        LiftTalon.set(ControlMode.PercentOutput, -0.35);
+        LiftTalon.set(ControlMode.PercentOutput, -0.6);
       }
     }
     else if(this.up){
@@ -82,7 +82,7 @@ public class Lift_Brushed extends SubsystemBase {
       }
       else{
         // we're close, so slow down
-        LiftTalon.set(ControlMode.PercentOutput, 0.35);
+        LiftTalon.set(ControlMode.PercentOutput, 0.6);
       }
     }
     else{
