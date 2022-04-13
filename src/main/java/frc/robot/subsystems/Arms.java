@@ -19,7 +19,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Arms extends SubsystemBase {
 
-  private static final CANSparkMax sparkMaxArms = new CANSparkMax(Constants.ArmsConstants.ArmsSparkMax, MotorType.kBrushless); 
+  private static final CANSparkMax sparkMaxArms = new CANSparkMax(Constants.ArmsConstants.ArmsSparkMax,
+      MotorType.kBrushless);
   private final SparkMaxPIDController pidController;
   private final RelativeEncoder encoder;
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
@@ -34,14 +35,14 @@ public class Arms extends SubsystemBase {
     sparkMaxArms.restoreFactoryDefaults();
     pidController = sparkMaxArms.getPIDController();
     encoder = sparkMaxArms.getEncoder();
-    
+
     // PID coefficients
     kP = 0.0252;
     kI = 0;
-    kD = 0.0001; 
-    kIz = 0; 
-    kFF = 0.025; 
-    kMaxOutput = 1; 
+    kD = 0.0001;
+    kIz = 0;
+    kFF = 0.025;
+    kMaxOutput = 1;
     kMinOutput = -1;
 
     atlimitBack = !m_limit.isTriggeredArmBack();
@@ -54,10 +55,11 @@ public class Arms extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    //sparkMaxArms.setSoftLimit(SoftLimitDirection.kForward, Constants.ArmsConstants.Forward);
+    // sparkMaxArms.setSoftLimit(SoftLimitDirection.kForward,
+    // Constants.ArmsConstants.Forward);
     sparkMaxArms.setSoftLimit(SoftLimitDirection.kReverse, Constants.ArmsConstants.Reverse);
 
-    //sparkMaxArms.enableSoftLimit(SoftLimitDirection.kForward, true);
+    // sparkMaxArms.enableSoftLimit(SoftLimitDirection.kForward, true);
     sparkMaxArms.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
     sparkMaxArms.setSmartCurrentLimit(40, 20, 10);
@@ -77,17 +79,17 @@ public class Arms extends SubsystemBase {
     SmartDashboard.putNumber("Arm position", encoder.getPosition());
 
     atlimitBack = m_limit.isTriggeredArmBack();
-    if(atlimitBack && backwards){
+    if (atlimitBack && backwards) {
       this.stop();
     }
 
     atlimitForward = m_limit.isTriggeredArmForward();
-    if(atlimitForward && !backwards){
+    if (atlimitForward && !backwards) {
       this.stop();
     }
   }
 
-  public void homePosition(){
+  public void homePosition() {
     this.backwards = false;
     this.setPosition(Constants.ArmsConstants.Home);
     SmartDashboard.putNumber("Arm target", Constants.ArmsConstants.Home);
@@ -106,20 +108,20 @@ public class Arms extends SubsystemBase {
     backwards = true;
 
     atlimitBack = m_limit.isTriggeredArmBack();
-    if(atlimitBack){
+    if (atlimitBack) {
       this.stop();
-    }else{
+    } else {
       sparkMaxArms.set(1);
-    } 
+    }
   }
 
   public void forward() {
     backwards = false;
 
     atlimitForward = m_limit.isTriggeredArmForward();
-    if(atlimitForward){
+    if (atlimitForward) {
       this.stop();
-    }else{
+    } else {
       sparkMaxArms.set(-1);
     }
   }
