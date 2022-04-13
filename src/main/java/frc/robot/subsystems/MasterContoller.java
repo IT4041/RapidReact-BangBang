@@ -21,7 +21,7 @@ public class MasterContoller extends SubsystemBase {
   private final IntakeWheels m_IntakeWheels;
   private final Feeder m_Feeder;
   private final ColorSensor m_ColorSensor;
-  private final Lift_Falcon m_lift;
+  private final Lift_BrushedDual m_lift;
   private final Arms m_arms;
   private final IntakeElbow m_intakeElbow;
 
@@ -31,7 +31,7 @@ public class MasterContoller extends SubsystemBase {
   private boolean m_target = false;
 
   public MasterContoller(Indexer in_Indexer, Turret in_Turret, BangBangShooter in_Shooter, LimeLight in_LimeLight,
-      IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor, Lift_Falcon in_lift, Arms in_arms, IntakeElbow in_intakeElbow) {
+      IntakeWheels in_IntakeWheels, Feeder in_feeder, ColorSensor in_ColorSensor, Lift_BrushedDual in_lift, Arms in_arms, IntakeElbow in_intakeElbow) {
     m_Indexer = in_Indexer;
     m_Turret = in_Turret;
     m_Shooter = in_Shooter;
@@ -52,21 +52,21 @@ public class MasterContoller extends SubsystemBase {
 
     // This method will be called once per scheduler run
     if (m_target) {
-      if (m_ColorSensor.BallIsWrongColor()) {
-        m_Shooter.disable();
-        m_Shooter.setFailSafe(true);
-        m_Shooter.setRPM(.345);
-        m_Turret.turn30degreesPositive();
-        Timer.delay(.25);
-        m_Indexer.shoot();
-        Timer.delay(1);
-        m_Indexer.off();
-        m_Shooter.setFailSafe(false);
-        m_Shooter.enable();
-        m_Turret.reset();
-      } else {
+      // if (m_ColorSensor.BallIsWrongColor()) {
+      //   m_Shooter.disable();
+      //   m_Shooter.setFailSafe(true);
+      //   m_Shooter.setRPM(.345);
+      //   m_Turret.turn30degreesPositive();
+      //   Timer.delay(.25);
+      //   m_Indexer.shoot();
+      //   Timer.delay(1);
+      //   m_Indexer.off();
+      //   m_Shooter.setFailSafe(false);
+      //   m_Shooter.enable();
+      //   m_Turret.reset();
+      // } else {
         this.doTargeting();
-      }
+      // }
     } else {
       this.stopTargeting();
     }

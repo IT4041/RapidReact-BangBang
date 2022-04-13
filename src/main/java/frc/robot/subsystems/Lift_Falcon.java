@@ -14,15 +14,15 @@ import frc.robot.Constants;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+// import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+// import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 public class Lift_Falcon extends SubsystemBase {
 
   private final TalonFX LiftTalonFX = new TalonFX(Constants.LiftConstants.LiftTalonFX); 
-  private final SupplyCurrentLimitConfiguration SupplyConfig = new SupplyCurrentLimitConfiguration(true, 100, 150, 100);
-  private final StatorCurrentLimitConfiguration StatorConfig = new StatorCurrentLimitConfiguration(true, 100, 150, 100);
+  // private final SupplyCurrentLimitConfiguration SupplyConfig = new SupplyCurrentLimitConfiguration(true, 100, 150, 100);
+  // private final StatorCurrentLimitConfiguration StatorConfig = new StatorCurrentLimitConfiguration(true, 100, 150, 100);
 
   private double kMaxOutput, kMinOutput;
   private boolean firstLift = true;
@@ -39,7 +39,7 @@ public class Lift_Falcon extends SubsystemBase {
     LiftTalonFX.setNeutralMode(NeutralMode.Brake);
 
     LiftTalonFX.setSensorPhase(false);
-    LiftTalonFX.setInverted(false);
+    LiftTalonFX.setInverted(true);
     LiftTalonFX.configVoltageCompSaturation(12);
     LiftTalonFX.enableVoltageCompensation(true);
 
@@ -49,15 +49,15 @@ public class Lift_Falcon extends SubsystemBase {
     LiftTalonFX.configForwardSoftLimitThreshold(Constants.LiftConstants.Top_SRX);
     LiftTalonFX.configReverseSoftLimitThreshold(Constants.LiftConstants.Home_SRX);
 
-    LiftTalonFX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
+    LiftTalonFX.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 30);
 
     LiftTalonFX.configNominalOutputForward(0,30);
     LiftTalonFX.configNominalOutputReverse(0,30);
     LiftTalonFX.configPeakOutputForward(kMaxOutput, 30);
     LiftTalonFX.configPeakOutputReverse(kMinOutput, 30);
 
-    LiftTalonFX.configSupplyCurrentLimit(SupplyConfig, 0);
-    LiftTalonFX.configStatorCurrentLimit(StatorConfig, 0);
+    // LiftTalonFX.configSupplyCurrentLimit(SupplyConfig, 0);
+    // LiftTalonFX.configStatorCurrentLimit(StatorConfig, 0);
 
     LiftTalonFX.setSelectedSensorPosition(0,0,30);
     SmartDashboard.putNumber("Lift position", LiftTalonFX.getSelectedSensorPosition() );

@@ -19,7 +19,7 @@ import frc.robot.commands.auto.groups.DualTrajectoryAutoWithTargeting;
 import frc.robot.commands.auto.groups.OneBallOldSchoolWithTargeting;
 import frc.robot.commands.auto.groups.SingleTrajectoryAutoWithTargeting;
 // import frc.robot.commands.auto.groups.TrajectoryOnlyDual;
-// import frc.robot.commands.auto.groups.TrajectoryOnlySingle;
+import frc.robot.commands.auto.groups.TrajectoryOnlySingle;
 import frc.robot.commands.auto.groups.TwoBallOldSchoolWithTargeting;
 import frc.robot.controllers.AxisJoystickButton;
 import frc.robot.controllers.AxisJoystickButton.ThresholdType;
@@ -41,7 +41,7 @@ public class RobotContainer {
 
   public final DriveTrain driveTrain = new DriveTrain(navX);
   private final Feeder feeder = new Feeder();
-  private final Lift_Falcon lift = new Lift_Falcon();
+  private final Lift_BrushedDual lift = new Lift_BrushedDual();
   private final Arms arms = new Arms(magSwitches);
   private final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow(magSwitches);
@@ -56,7 +56,8 @@ public class RobotContainer {
   //private SingleTrajectoryAutoWithTargeting TwoBall;
   private SingleTrajectoryAutoWithTargeting ThreeBall;
   private DualTrajectoryAutoWithTargeting FiveBall;
-  //private TrajectoryOnlySingle TrajOnlySingle;
+  private DualTrajectoryAutoWithTargeting FourBall;
+  private TrajectoryOnlySingle TrajOnlySingle;
 
   private OneBallOldSchoolWithTargeting OneBallOldSchool;
   private TwoBallOldSchoolWithTargeting TwoBallOldSchool;
@@ -70,7 +71,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    //this.TrajOnlySingle = new TrajectoryOnlySingle(driveTrain, m_trajectories[0]);
+    this.TrajOnlySingle = new TrajectoryOnlySingle(driveTrain, m_trajectories[2]);
 
     this.OneBallOldSchool = new OneBallOldSchoolWithTargeting(masterController, driveTrain);
     this.TwoBallOldSchool = new TwoBallOldSchoolWithTargeting(masterController, driveTrain);
@@ -78,17 +79,19 @@ public class RobotContainer {
     //this.OneBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[0]);
     //this.TwoBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[1]);
     this.ThreeBall = new SingleTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[2]);
-    this.FiveBall = new DualTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[3],m_trajectories[4]);
+    this.FourBall = new DualTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[3],m_trajectories[4]);
+    this.FiveBall = new DualTrajectoryAutoWithTargeting(masterController,driveTrain,m_trajectories[5],m_trajectories[6]);
 
     this.m_chooser = new SendableChooser<Command>();
 
     this.m_chooser.setDefaultOption("Five Ball", this.FiveBall);
+    this.m_chooser.addOption("Four Ball", this.FourBall);
     this.m_chooser.addOption("Three Ball", this.ThreeBall);
     //this.m_chooser.addOption("Two Ball", this.TwoBall);
     //this.m_chooser.addOption("One Ball - Straight Back", this.OneBall);
     this.m_chooser.addOption("Two Ball", this.TwoBallOldSchool);
     this.m_chooser.addOption("One Ball", this.OneBallOldSchool);
-    //this.m_chooser.addOption("Trajectory Only", this.TrajOnlySingle);
+    this.m_chooser.addOption("Trajectory Only", this.TrajOnlySingle);
 
 
     // Put the chooser on the dashboard
